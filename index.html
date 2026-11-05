@@ -1,0 +1,704 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AIM Labs — Innovation built for football</title>
+<meta name="description" content="AIM Labs is the research and innovation division of AIM World, exploring, validating and translating research into practical football intelligence.">
+<link rel="icon" href="assets/aim-mark.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="aim-mark" viewBox="0 0 36 36"><path d="M9.46282 6.94062H15.0889V13.4681L9.46282 19.6404V6.94062ZM26.08 1.41602L20.712 7.30475V1.41602H3.84277V29.051L9.46282 34.5816V27.8332L15.0889 21.661V34.5786H20.709V15.4976L26.329 9.33134V34.5846L31.9551 29.054V1.41602H26.077H26.08Z" fill="currentColor"/></symbol>
+</svg>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- ========== HEADER — a viewfinder that collapses into an instrument capsule ========== -->
+<header class="hdr" id="hdr">
+  <div class="hdr__bar">
+    <a class="logo" href="#" aria-label="AIM Labs home">
+      <svg class="logo__mark"><use href="#aim-mark"/></svg>
+      <span class="logo__fold"><span class="logo__word">AIM</span><span class="logo__labs">LABS</span></span>
+    </a>
+    <div class="hdr__read mono" aria-hidden="true">
+      <i class="hdr__rec"></i>
+      <span id="hud-s">CAPTURE</span>
+      <span class="hdr__f">f <b id="hud-f">000</b><span class="hdr__n">/<span id="hud-n">150</span></span></span>
+    </div>
+    <button class="menu-btn mono" id="menu-btn" aria-expanded="false" aria-controls="menu">
+      <span class="menu-btn__lbl"><span class="l-open">Menu</span><span class="l-close">Close</span></span>
+      <i class="menu-btn__icon" aria-hidden="true"><i></i><i></i></i>
+    </button>
+    <i class="hdr__prog" aria-hidden="true"><i id="hud-bar"></i></i>
+  </div>
+</header>
+
+<!-- ========== MENU — opens like the lens ========== -->
+<div class="menu" id="menu" aria-label="Site menu" role="dialog" aria-modal="true" inert>
+  <div class="menu__grid" aria-hidden="true"></div>
+  <div class="wrap menu__inner">
+    <nav class="menu__nav" aria-label="Primary">
+      <a href="#research"><span class="mono">01</span><b>Research &amp; Innovation</b><small>Questions, methods, collaborations</small></a>
+      <a href="#technology"><span class="mono">02</span><b>Technology</b><small>Intelligence behind the game</small></a>
+      <a href="#validation"><span class="mono">03</span><b>Validation</b><small>Evidence before scale</small></a>
+      <a href="#partnerships"><span class="mono">04</span><b>Partnerships</b><small>Technology that goes further</small></a>
+      <a href="#insights"><span class="mono">05</span><b>Insights</b><small>Better questions, better intelligence</small></a>
+      <a href="#about"><span class="mono">06</span><b>About</b><small>People, governance, careers</small></a>
+    </nav>
+    <aside class="menu__side">
+      <a class="btn btn--green" href="#partner">Partner with AIM Labs</a>
+      <div class="menu__note">
+        <p class="mono">Optics</p>
+        <p><b>Human</b> shows the game as a coach sees it. <b>Machine</b> shows what a model reads from the same frames. Switch between them in the opening film.</p>
+      </div>
+      <div class="menu__links mono">
+        <a href="#">Research partnerships</a><a href="#">Universities</a><a href="#">Careers</a><a href="#">Contact</a>
+      </div>
+    </aside>
+  </div>
+  <div class="wrap menu__foot mono"><span>aimlabs.io · An AIM World business</span><a href="#">← AIM World</a></div>
+</div>
+
+<main id="main">
+
+<!-- ========== 01 HERO — "Two optics of one moment" ========== -->
+<section class="hero dark" id="hero" aria-labelledby="hero-h" data-hud="CAPTURE">
+  <div class="stage" id="stage" data-parallax="-0.32" data-px-origin="top">
+    <video id="hero-video" muted playsinline autoplay preload="auto" poster="assets/video/clip-01-duel.jpg" src="assets/video/clip-01-duel.mp4" aria-hidden="true"></video>
+    <div class="grade" aria-hidden="true"><i class="grade__tone"></i><i class="grade__bloom"></i><i class="grade__vig"></i><i class="grade__grain"></i></div>
+    <canvas id="machine" aria-hidden="true"></canvas>
+    <div class="lens" id="lens" aria-hidden="true">
+      <span class="lens__lbl mono" id="lens-lbl">Machine view</span>
+    </div>
+    <div class="stage__shade" aria-hidden="true"></div>
+    <div class="reel mono" id="reel">
+      <div class="optics" role="group" aria-label="Viewing optics: human or machine">
+      <button class="optics__b mono" data-optic="human" aria-pressed="true">Human view</button>
+      <button class="optics__b mono" data-optic="machine" aria-pressed="false">Machine view</button>
+      <i class="optics__thumb" aria-hidden="true"></i>
+    </div>
+      <div class="reel__clips" role="group" aria-label="Choose a clip">
+        <button class="reel__b" data-clip="0" aria-pressed="true"><i></i>01 · 1v1</button>
+        <button class="reel__b" data-clip="1" aria-pressed="false"><i></i>02 · Sand pitch</button>
+        <button class="reel__b" data-clip="2" aria-pressed="false"><i></i>03 · Park game</button>
+        <button class="reel__b" data-clip="3" aria-pressed="false"><i></i>04 · Night match</button>
+      </div>
+      <p class="reel__src"><b>AIM film</b> · model layer: open-source YOLO11 pose &amp; detection, run frame by frame — not an AIM Labs validated result</p>
+    </div>
+  </div>
+  <p class="sr-only">Footage from the AIM film: street and grassroots football. A lens reveals what an off-the-shelf computer-vision model detects in each frame: players, body keypoints, tracks and the ball.</p>
+
+  <div class="wrap hero__copy" data-parallax="0.14" data-px-origin="top" data-px-fade="1">
+    <p class="eyebrow"><span class="dot"></span>AIM World · Research &amp; Innovation Division</p>
+    <h1 id="hero-h" class="hero__h">
+      <span class="line">Innovation built</span>
+      <span class="line">for football.</span>
+      <span class="line line--green">Intelligence</span>
+      <span class="line line--green">built to scale.</span>
+    </h1>
+    <p class="hero__lede">AIM Labs explores emerging technology, validates new ideas and translates research into practical football intelligence for players, coaches and organisations.</p>
+    <div class="hero__ctas">
+      <a class="btn btn--green" href="#glance">Explore AIM Labs</a>
+      <a class="btn btn--ghost" href="#partner">Partner with AIM Labs</a>
+    </div>
+  </div>
+
+  <div class="wrap hero__foot mono">
+    <span class="hero__hint"><i class="hint-dot"></i><span class="hint-fine">Move across the pitch to see what the model sees</span><span class="hint-touch">Tap and drag on the video to move the lens</span></span>
+    <span class="hero__legend"><b class="lg lg--box">Detection</b><b class="lg lg--pose">Pose</b><b class="lg lg--trk">Track</b></span>
+  </div>
+</section>
+
+<!-- ========== 02 AT A GLANCE — a disciplined facts panel ========== -->
+<section class="glance dark" data-hud="MEASURE" id="glance" aria-labelledby="glance-h">
+  <div class="glance__bg" aria-hidden="true" data-parallax="-0.28"></div>
+  <div class="wrap glance__content" data-parallax="0.07">
+    <div class="glance__head">
+      <div>
+        <p class="idx mono">02 / AIM Labs at a glance</p>
+        <h2 id="glance-h" class="h2">A verified picture,<br><span class="g">not a louder claim.</span></h2>
+      </div>
+      <p class="glance__note mono">▲ Placeholder figures · only approved, verified facts go live</p>
+    </div>
+
+    <dl class="facts">
+      <div class="fact">
+        <dt class="mono">Research projects</dt>
+        <dd><span class="odo" data-odo="12" aria-label="12">12</span></dd>
+        <p class="fact__def">Active, completed or in validation</p>
+        <div class="fact__stages" role="img" aria-label="Projects by stage: 5 research · 3 prototype · 2 pilot · 2 in validation"><div class="fact__bar"><i class="st st--research" style="flex-grow:5"></i><i class="st st--prototype" style="flex-grow:3"></i><i class="st st--pilot" style="flex-grow:2"></i><i class="st st--validation" style="flex-grow:2"></i></div><p class="mono">5 research · 3 prototype · 2 pilot · 2 in validation</p></div>
+        <p class="fact__src mono">As of — · source pending approval</p>
+      </div>
+      <div class="fact">
+        <dt class="mono">Research partners</dt>
+        <dd><span class="odo" data-odo="6" aria-label="6">6</span></dd>
+        <p class="fact__def">Universities, football and technology organisations formally involved</p>
+        <p class="fact__src mono">As of — · source pending approval</p>
+      </div>
+      <div class="fact">
+        <dt class="mono">Validated capabilities</dt>
+        <dd><span class="odo" data-odo="4" aria-label="4">4</span></dd>
+        <p class="fact__def">Models or methods validated to an approved standard</p>
+        <div class="fact__stages" role="img" aria-label="Validated capabilities by use: 2 beta · 2 live"><div class="fact__bar"><i class="st st--beta" style="flex-grow:2"></i><i class="st st--live" style="flex-grow:2"></i></div><p class="mono">2 beta · 2 live</p></div>
+        <p class="fact__src mono">As of — · source pending approval</p>
+      </div>
+      <div class="fact">
+        <dt class="mono">Annotated clips</dt>
+        <dd><span class="odo" data-odo="38" data-suffix="k" aria-label="38k">38k</span></dd>
+        <p class="fact__def">Football video used in approved benchmark work</p>
+        <p class="fact__src mono">As of — · source pending approval · <a href="#glance-ex">see one ↓</a></p>
+      </div>
+      <div class="fact">
+        <dt class="mono">AIM World applications</dt>
+        <dd><span class="odo" data-odo="3" aria-label="3">3</span></dd>
+        <p class="fact__def">Products using validated Labs capability</p>
+        <div class="fact__stages" role="img" aria-label="Applications by stage: 3 live"><div class="fact__bar"><i class="st st--live" style="flex-grow:3"></i></div><p class="mono">3 live</p></div>
+        <p class="fact__src mono">As of — · source pending approval</p>
+      </div>
+    </dl>
+
+    <div class="glance__more">
+      <figure class="exhibit" id="glance-ex">
+        <div class="exhibit__media">
+          <img loading="lazy" src="assets/video/clip-04-match.jpg" alt="A floodlit grassroots match filmed from a drone">
+          <canvas id="glance-cv" aria-hidden="true"></canvas>
+          <span class="exhibit__tag mono" aria-hidden="true"><b id="glance-n">00</b> people detected · 1 frame</span>
+        </div>
+        <figcaption>
+          <p class="mono">What one annotated clip looks like</p>
+          <p>Every frame of a clip is labelled: each player boxed and tracked, uncertain detections marked in red. Thousands of these clips are what models are benchmarked against. <span class="exhibit__src">Shown: AIM film, off-the-shelf model output — illustrative.</span></p>
+        </figcaption>
+      </figure>
+
+    </div>
+  </div>
+</section>
+
+<!-- ========== 03 WHY — from a cloud of data to one cue on the pitch ========== -->
+<section class="why dark" data-hud="QUESTION" id="why" aria-labelledby="why-h">
+  <div class="why__track" id="why-track">
+    <div class="why__sticky">
+      <div class="wrap why__grid">
+        <div class="why__copy">
+          <p class="idx mono">03 / Why AIM Labs exists</p>
+          <h2 id="why-h" class="h2">Innovation matters<br>when it <span class="g">improves<br>the game.</span></h2>
+          <ol class="why__steps">
+            <li class="is-on"><span class="mono">01</span><div><b>Explore what is possible.</b><p>One 8-second clip. Every joint of every player, every frame — a cloud of raw data.</p></div></li>
+            <li><span class="mono">02</span><div><b>Test what is credible.</b><p>Uncertain points are flagged, not hidden. What survives is one player we can trust.</p></div></li>
+            <li><span class="mono">03</span><div><b>Translate what works.</b><p>The player's movement becomes a path, a shape, a moment — then one cue a coach can use.</p></div></li>
+          </ol>
+        </div>
+        <div class="why__stage" id="why-stage">
+          <img src="assets/video/clip-01-duel.jpg" alt="" aria-hidden="true" class="why__img">
+          <canvas id="why-cv" aria-hidden="true"></canvas>
+          <i class="why__fade" aria-hidden="true"></i>
+          <div class="why__count mono" aria-hidden="true"><b id="why-num">0</b><span id="why-unit">data points</span></div>
+          <div class="why__cue" id="why-cue">
+            <p class="mono">On the pitch · illustrative cue</p>
+            <p class="why__cue-t">“Go at him with pace — then cut. Don't slow down before the touch.”</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 04 RESEARCH ========== -->
+<section class="research paper" data-hud="EXPLORE" id="research" aria-labelledby="research-h">
+  <div class="wrap">
+    <div class="sec-head sec-head--split">
+      <div>
+        <p class="idx mono">04 / Research &amp; Innovation</p>
+        <h2 id="research-h" class="h2">Research grounded<br>in the game.</h2>
+      </div>
+      <p class="body">Every area starts with a football question. Technology is the method, not the headline — and work in progress is labelled as exactly that.</p>
+    </div>
+
+    <div class="status-legend status-legend--row" aria-label="Capability status scale">
+      <p class="mono">How we label the work</p>
+      <ol class="scale">
+        <li><span class="tag tag--research">Research</span><small>A question being explored</small></li>
+        <li><span class="tag tag--prototype">Prototype</span><small>Built to learn, not to ship</small></li>
+        <li><span class="tag tag--pilot">Pilot</span><small>Tested in a real environment</small></li>
+        <li><span class="tag tag--validation">In validation</span><small>Benchmarked and challenged</small></li>
+        <li><span class="tag tag--beta">Beta</span><small>Limited, monitored use</small></li>
+        <li><span class="tag tag--live">Live</span><small>In production across AIM World</small></li>
+      </ol>
+    </div>
+
+    <div class="lab" id="lab">
+      <div class="lab__spec">
+        <figure class="lab__frame" id="lab-frame">
+          <img loading="lazy" src="assets/video/duel-f145.jpg" alt="Frame from the AIM film: a player in a red bib dribbles past a defender in yellow on a grass pitch">
+          <canvas id="lab-cv" aria-hidden="true"></canvas>
+          <span class="lab__tag mono" aria-hidden="true">Specimen · AIM film · 1v1 · f145</span>
+        </figure>
+        <div class="lab__read" aria-live="polite">
+          <p class="mono" id="lab-k">One moment, eight questions</p>
+          <p id="lab-v">Every research area looks at the same real frame — and asks something different of it.</p>
+        </div>
+      </div>
+      <ol class="lab__list">
+        <li class="lab__row" data-area="cv" tabindex="0">
+          <span class="lab__n mono">R.01</span>
+          <div>
+            <h3>Computer vision</h3>
+            <p class="lab__q">Can standard video become reliable, structured information about movement and ball interaction?</p>
+            <div class="lab__meta"><span class="tag tag--validation">In validation</span><span class="mono">Video → events</span></div>
+          </div>
+        </li>
+        <li class="lab__row" data-area="bio" tabindex="0">
+          <span class="lab__n mono">R.02</span>
+          <div>
+            <h3>Biomechanics &amp; movement</h3>
+            <p class="lab__q">Which measures of turning, balance and coordination genuinely inform development?</p>
+            <div class="lab__meta"><span class="tag tag--research">Research</span><span class="mono">Movement quality</span></div>
+          </div>
+        </li>
+        <li class="lab__row" data-area="ml" tabindex="0">
+          <span class="lab__n mono">R.03</span>
+          <div>
+            <h3>AI &amp; machine learning</h3>
+            <p class="lab__q">Where can models support pattern recognition and decision support without overstating certainty?</p>
+            <div class="lab__meta"><span class="tag tag--prototype">Prototype</span><span class="mono">Decision support</span></div>
+          </div>
+        </li>
+        <li class="lab__row" data-area="fi" tabindex="0">
+          <span class="lab__n mono">R.04</span>
+          <div>
+            <h3>Football intelligence</h3>
+            <p class="lab__q">How does a technical output become meaningful to a coach on a Tuesday session?</p>
+            <div class="lab__meta"><span class="tag tag--pilot">Pilot</span><span class="mono">Context layer</span></div>
+          </div>
+        </li>
+        <li class="lab__row" data-area="beh" tabindex="0">
+          <span class="lab__n mono">R.05</span>
+          <div>
+            <h3>Behavioural science &amp; learning</h3>
+            <p class="lab__q">What kind of feedback actually changes how young players train and learn?</p>
+            <div class="lab__meta"><span class="tag tag--research">Research</span><span class="mono">Feedback design</span></div>
+          </div>
+        </li>
+        <li class="lab__row" data-area="data" tabindex="0">
+          <span class="lab__n mono">R.06</span>
+          <div>
+            <h3>Data &amp; decision science</h3>
+            <p class="lab__q">How do we compare players fairly while keeping uncertainty and context visible?</p>
+            <div class="lab__meta"><span class="tag tag--validation">In validation</span><span class="mono">Benchmarking</span></div>
+          </div>
+        </li>
+        <li class="lab__row" data-area="prod" tabindex="0">
+          <span class="lab__n mono">R.07</span>
+          <div>
+            <h3>Product experimentation</h3>
+            <p class="lab__q">Which new workflows earn a place in real products — and which should stop here?</p>
+            <div class="lab__meta"><span class="tag tag--beta">Beta</span><span class="mono">Workflows</span></div>
+          </div>
+        </li>
+        <li class="lab__row" data-area="collab" tabindex="0">
+          <span class="lab__n mono">R.08</span>
+          <div>
+            <h3>Research collaboration</h3>
+            <p class="lab__q">Where do universities, clubs and specialists strengthen the evidence?</p>
+            <div class="lab__meta"><span class="mono">Partners</span> <a class="link" href="#partner">Collaborate on research →</a></div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 05 TECHNOLOGY — the frame, pulled apart into its layers ========== -->
+<section class="tech dark" data-hud="TRACK" id="technology" aria-labelledby="tech-h">
+  <div class="wrap">
+    <div class="sec-head sec-head--split">
+      <div>
+        <p class="idx mono">05 / Technology &amp; Intelligence</p>
+        <h2 id="tech-h" class="h2">Intelligence<br><span class="g">behind the game.</span></h2>
+      </div>
+      <p class="body">Every frame a coach watches can be five layers deep. Pull them apart, pick one, then put the picture back together.</p>
+    </div>
+
+    <div class="xray" id="xray">
+      <div class="xray__fix">
+      <div class="xray__view" id="xray-view" aria-label="Exploded view of one video frame and the model layers behind it" role="img">
+        <div class="xray__tilt" id="xray-tilt">
+          <div class="xray__stack">
+          <div class="plane plane--video" data-l="0" style="--i:0"><video id="xray-video" muted playsinline loop preload="none" poster="assets/video/clip-02-sand.jpg"><source src="assets/video/clip-02-sand.mp4" type="video/mp4"></video><span class="plane__n mono">00 · Capture</span></div>
+          <div class="plane" data-l="1" style="--i:1"><canvas></canvas><span class="plane__n mono">01 · Detect</span></div>
+          <div class="plane" data-l="2" style="--i:2"><canvas></canvas><span class="plane__n mono">02 · Pose</span></div>
+          <div class="plane" data-l="3" style="--i:3"><canvas></canvas><span class="plane__n mono">03 · Track</span></div>
+          <div class="plane" data-l="4" style="--i:4"><canvas></canvas><span class="plane__n mono">04 · Context</span></div>
+          <div class="plane plane--human" data-l="5" style="--i:5"><div class="xcue"><p class="mono">AIM · Session review · suggestion</p><p class="xcue__t">Possession changed <b id="xcue-n">5</b> times in 8 seconds. Show the clip — then train the first touch under pressure.</p><div class="xcue__act"><span class="is-k">Keep</span><span>Edit</span><span>Dismiss</span></div></div><span class="plane__n mono">05 · Human</span></div>
+          </div>
+        </div>
+        <span class="xray__src mono">AIM film · off-the-shelf model output · illustrative</span>
+      </div>
+      <div class="xray__mode mono" role="group" aria-label="View">
+          <button data-mode="apart" aria-pressed="true">Pull apart</button>
+          <button data-mode="flat" aria-pressed="false">Compose</button>
+          <i aria-hidden="true"></i>
+        </div>
+      </div>
+
+      <div class="xray__panel">
+        <ol class="xray__layers">
+          <li><button class="xl is-sel" data-l="0"><span class="mono">00</span><span class="xl__body"><b>Capture</b><small>Standard video in — a phone or a club camera, no sensors.</small></span><span class="xl__live mono" data-live="0">—</span></button></li>
+          <li><button class="xl" data-l="1"><span class="mono">01</span><span class="xl__body"><b>Detect</b><small>Every player and the ball, each with a confidence value.</small></span><span class="xl__live mono" data-live="1">—</span></button></li>
+          <li><button class="xl" data-l="2"><span class="mono">02</span><span class="xl__body"><b>Pose</b><small>17 joints per player: posture, balance, stride.</small></span><span class="xl__live mono" data-live="2">—</span></button></li>
+          <li><button class="xl" data-l="3"><span class="mono">03</span><span class="xl__body"><b>Track</b><small>One ID per player, held across frames, with a path behind it.</small></span><span class="xl__live mono" data-live="3">—</span></button></li>
+          <li><button class="xl" data-l="4"><span class="mono">04</span><span class="xl__body"><b>Context</b><small>Who has the ball, and when it changes hands — derived, not scripted.</small></span><span class="xl__live mono" data-live="4">—</span></button></li>
+          <li><button class="xl" data-l="5"><span class="mono">05</span><span class="xl__body"><b>Human</b><small>One suggestion on the coach’s phone. A person decides.</small></span><span class="xl__live mono" data-live="5">—</span></button></li>
+        </ol>
+        <p class="xray__hint mono">Select a layer · move across the stack to tilt it</p>
+      </div>
+    </div>
+
+    <ul class="stack mono" aria-label="Technology story">
+      <li>Mobile computer vision</li><li>Player intelligence</li><li>Coach &amp; session intelligence</li><li>Performance video</li><li>Permissioned profiles</li><li>Organisational insight</li><li>Integrations</li><li class="hl">Human football expertise</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ========== 06 RESEARCH TO APPLICATION ========== -->
+<section class="pipeline paper" data-hud="VALIDATE" id="validation" aria-labelledby="pipe-h">
+  <div class="wrap">
+    <div class="sec-head sec-head--split">
+      <div>
+        <p class="idx mono">06 / From research to application</p>
+        <h2 id="pipe-h" class="h2">Explore. Test.<br>Validate. Apply.</h2>
+      </div>
+      <p class="body">Not every experiment becomes a product — and that is the point. Pick a project and watch it run the eight validation gates. Most stop — each stop is a decision made on evidence, and what it learned feeds the next question.</p>
+    </div>
+
+    <div class="passport" id="passport">
+      <div class="passport__head">
+        <p class="mono passport__k">Project passport <span class="passport__ill">Illustrative portfolio</span></p>
+        <div class="passport__nav">
+          <button class="mono" id="pp-prev" aria-label="Previous project">←</button>
+          <span class="mono" id="pp-i">01 / 18</span>
+          <button class="mono" id="pp-next" aria-label="Next project">→</button>
+          <button class="mono pp-replay" id="pp-replay">↻ Replay</button>
+        </div>
+      </div>
+
+      <div class="pick" id="pp-pick" role="group" aria-label="Choose a project"></div>
+
+      <div class="passport__title">
+        <div>
+          <p class="mono" id="pp-area">Computer vision</p>
+          <h3 id="pp-name">Project</h3>
+          <p class="passport__q" id="pp-q">Question</p>
+        </div>
+        <p class="verdict mono" id="pp-verdict">—</p>
+      </div>
+
+      <div class="run" id="pp-run">
+        <ol class="run__gates" id="pp-gates">
+            <li class="gate" data-s="0"><span class="gate__n mono">01</span><span class="gate__dot"><i></i></span><b>Research question</b></li>
+            <li class="gate" data-s="1"><span class="gate__n mono">02</span><span class="gate__dot"><i></i></span><b>Benchmark &amp; test</b></li>
+            <li class="gate" data-s="2"><span class="gate__n mono">03</span><span class="gate__dot"><i></i></span><b>Real-world trial</b></li>
+            <li class="gate" data-s="3"><span class="gate__n mono">04</span><span class="gate__dot"><i></i></span><b>Review &amp; challenge</b></li>
+            <li class="gate" data-s="4"><span class="gate__n mono">05</span><span class="gate__dot"><i></i></span><b>Bias &amp; robustness</b></li>
+            <li class="gate" data-s="5"><span class="gate__n mono">06</span><span class="gate__dot"><i></i></span><b>Human oversight</b></li>
+            <li class="gate" data-s="6"><span class="gate__n mono">07</span><span class="gate__dot"><i></i></span><b>Deployment decision</b></li>
+            <li class="gate" data-s="7"><span class="gate__n mono">08</span><span class="gate__dot"><i></i></span><b>Learning loop</b></li>
+        </ol>
+        <p class="run__gate mono" id="pp-gate" aria-hidden="true"></p>
+        <div class="run__end" id="pp-end"><i></i><span class="mono">Live in <br>AIM World</span></div>
+        <span class="run__token" id="pp-token" aria-hidden="true"></span>
+        <div class="run__why" id="pp-why" aria-live="polite">
+          <p class="mono" id="pp-why-k">Why it stopped</p>
+          <p id="pp-out">—</p>
+          <p class="run__fed mono"><span>↺ Fed back</span> <b id="pp-fed">—</b></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="funnel">
+      <p class="funnel__k mono">The whole portfolio · 18 questions in, 2 applied · <span class="hint-fine">hover a thread to open its passport</span><span class="hint-touch">swipe the chart · tap a thread to open its passport</span></p>
+<div class="funnel__scroll">
+      <svg viewBox="0 0 1200 380" id="funnel" class="funnel__svg" role="img" aria-labelledby="funnel-t">
+        <title id="funnel-t">Diagram: many research questions enter; fewer pass each evidence gate; validated work is applied and learning loops back.</title>
+        <g class="gates">
+          <line x1="300" y1="20" x2="300" y2="330"/><line x1="600" y1="20" x2="600" y2="330"/><line x1="900" y1="20" x2="900" y2="330"/>
+        </g>
+        <g id="threads"></g>
+        <path class="loop" d="M1150 340 C 1100 375, 120 375, 60 340" />
+        <text x="600" y="372" class="loop__t" text-anchor="middle">LEARNING LOOP — evidence feeds the next question</text>
+      </svg>
+      </div>
+      <ol class="funnel__cols">
+        <li><span class="mono">Stage 01</span><h3>Explore</h3><p>Identify football questions, emerging technology and approaches worth investigating.</p></li>
+        <li><span class="mono">Stage 02</span><h3>Validate</h3><p>Test reliability, usefulness, limitations and real-world relevance through structured research.</p></li>
+        <li><span class="mono">Stage 03</span><h3>Translate</h3><p>Turn validated learning into models, workflows, features, products or IP.</p></li>
+        <li><span class="mono">Stage 04</span><h3>Scale &amp; extend</h3><p>Apply proven capability across AIM World — and selectively beyond it.</p></li>
+      </ol>
+    </div>
+
+  </div>
+</section>
+
+<!-- ========== 07 PROOF & PARTNERSHIPS ========== -->
+<section class="proof dark" data-hud="PROOF" id="partnerships" aria-labelledby="proof-h">
+  <div class="wrap">
+    <div class="sec-head sec-head--split">
+      <div>
+        <p class="idx mono">07 / Proof &amp; Partnerships</p>
+        <h2 id="proof-h" class="h2">Evidence<br><span class="g">before scale.</span></h2>
+      </div>
+      <p class="body">Claims sit next to the evidence that supports them. Status, method and partner role are always stated — never implied.</p>
+    </div>
+
+    <div class="claims">
+      <article class="claim2" data-flip>
+        <div class="claim2__in">
+          <div class="claim2__face claim2__front">
+            <div class="claim2__top mono"><span>Claim 01</span><span class="tag tag--validation">In validation</span></div>
+            <h3>Phone video can measure players and the ball reliably.</h3>
+            <p class="claim2__sub">A claim on its own is just a sentence.</p>
+            <button class="claim2__btn mono" aria-label="Show the evidence for claim 01">Show the evidence <i>↻</i></button>
+          </div>
+          <div class="claim2__face claim2__back">
+            <div class="claim2__top mono"><span>Evidence · claim 01</span><span class="tag tag--validation">In validation</span></div>
+            <p class="claim2__lead">Same model, four AIM clips. Reliability holds in daylight — and drops at night. We publish the drop.</p>
+            <div class="bars" role="img" aria-label="Ball found in 88% of frames in the 1v1 clip, 93% on sand, 57% in the park and 4% at night. Mean person confidence 0.88, 0.88, 0.87 and 0.74.">
+              <div class="bars__h mono"><span>Clip</span><span>Ball found · % of frames</span><span>Person conf.</span></div>
+              <div class="bar"><span class="mono">1v1 · day</span><i style="--v:.875"></i><b class="mono">88%</b><b class="mono">0.88</b></div>
+              <div class="bar"><span class="mono">Sand · day</span><i style="--v:.925"></i><b class="mono">93%</b><b class="mono">0.88</b></div>
+              <div class="bar"><span class="mono">Park · day</span><i style="--v:.574"></i><b class="mono">57%</b><b class="mono">0.87</b></div>
+              <div class="bar is-low"><span class="mono">Match · night</span><i style="--v:.036"></i><b class="mono">4%</b><b class="mono">0.74</b></div>
+            </div>
+            <ul class="claim2__rows mono">
+              <li><i>Method</i>Off-the-shelf detector run on every frame of four AIM clips</li>
+              <li><i>Partner</i>[University partner — role: independent evaluation]</li>
+              <li><i>Limits</i>Low light and small, distant players</li>
+            </ul>
+            <button class="claim2__btn mono" aria-label="Back to claim 01">Back to the claim <i>↺</i></button>
+          </div>
+        </div>
+      </article>
+
+      <article class="claim2" data-flip>
+        <div class="claim2__in">
+          <div class="claim2__face claim2__front">
+            <div class="claim2__top mono"><span>Claim 02</span><span class="tag tag--pilot">Pilot</span></div>
+            <h3>Session review saves coaches time.</h3>
+            <p class="claim2__sub">A claim on its own is just a sentence.</p>
+            <button class="claim2__btn mono" aria-label="Show the evidence for claim 02">Show the evidence <i>↻</i></button>
+          </div>
+          <div class="claim2__face claim2__back">
+            <div class="claim2__top mono"><span>Evidence · claim 02</span><span class="tag tag--pilot">Pilot</span></div>
+            <p class="claim2__lead">Minutes a coach spent finding and sharing clips after each session, during a 12-week academy pilot.</p>
+            <div class="bars bars--time" role="img" aria-label="Placeholder: 42 minutes per session before, 15 minutes with session review.">
+              <div class="bars__h mono"><span></span><span>Minutes per session · placeholder</span><span></span></div>
+              <div class="bar"><span class="mono">Before</span><i style="--v:1"></i><b class="mono">42</b><b></b></div>
+              <div class="bar is-good"><span class="mono">With review</span><i style="--v:.357"></i><b class="mono">15</b><b></b></div>
+            </div>
+            <ul class="claim2__rows mono">
+              <li><i>Method</i>12-week pilot, academy environment, self-reported time logs</li>
+              <li><i>Partner</i>[Club partner — role: real-world trial]</li>
+              <li><i>Limits</i>One age group, one club so far</li>
+            </ul>
+            <button class="claim2__btn mono" aria-label="Back to claim 02">Back to the claim <i>↺</i></button>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="fitcheck" id="fitcheck">
+      <div class="fitcheck__head">
+        <p class="idx mono">Technology that goes further</p>
+        <h3 class="h3">Extending proven technology — <span class="g">selectively.</span></h3>
+        <p class="body">AIM technology can strengthen a complementary business. It is never licensed to one that competes with AIM World. Try the test.</p>
+      </div>
+      <div class="fitcheck__ui">
+        <div class="fitcheck__who">
+          <p class="mono">Who wants AIM technology? <span>Illustrative examples</span></p>
+          <div class="who" role="radiogroup" aria-label="Type of organisation">
+            <button role="radio" aria-checked="true" data-k="wear">Wearable &amp; sensor maker</button>
+            <button role="radio" aria-checked="false" data-k="cast">Broadcaster or streaming platform</button>
+            <button role="radio" aria-checked="false" data-k="edu">Coach-education provider</button>
+            <button role="radio" aria-checked="false" data-k="kit">Equipment manufacturer</button>
+            <button role="radio" aria-checked="false" data-k="agency">Player representation agency</button>
+            <button role="radio" aria-checked="false" data-k="plat">Rival player-development platform</button>
+          </div>
+        </div>
+        <div class="fitcheck__out">
+          <div class="meter" aria-hidden="true"><span class="mono">✓ Complementary</span><div class="meter__track"><i id="fit-dot"></i></div><span class="mono">✕ Direct competitor</span></div>
+          <p class="fit__verdict mono" id="fit-verdict">Complementary</p>
+          <p class="fit__why" id="fit-why">—</p>
+          <div class="models">
+            <div class="model" data-m="lic"><span class="mono">M.01</span><h4>Technology licensing</h4><p>Defined capability inside a partner's product, with clear scope and IP protection.</p></div>
+            <div class="model" data-m="emb"><span class="mono">M.02</span><h4>Embedded &amp; integrated</h4><p>AIM intelligence, APIs or workflows inside complementary platforms and devices.</p></div>
+            <div class="model" data-m="joint"><span class="mono">M.03</span><h4>Joint development</h4><p>Partner brings hardware, distribution or data. Labs brings research and technology.</p></div>
+            <div class="model" data-m="co"><span class="mono">M.04</span><h4>Co-branded deployment</h4><p>Used selectively, without diluting ownership or differentiation.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 08 PEOPLE & STANDARDS ========== -->
+<section class="people paper" data-hud="HUMAN" id="about" aria-labelledby="people-h">
+  <div class="wrap">
+    <div class="sec-head sec-head--split">
+      <div>
+        <p class="idx mono">08 / People &amp; Standards</p>
+        <h2 id="people-h" class="h2">Innovation with<br>responsibility.</h2>
+      </div>
+      <p class="body">Our principles are not a policy page. They change what the technology is allowed to show — here is one frame of young players, with each principle applied.</p>
+    </div>
+
+    <div class="std" id="std">
+      <div class="std__frame" id="std-frame">
+        <img loading="lazy" src="assets/video/sand-f094.jpg" alt="Frame from the AIM film: children playing a game on a sand pitch, one striking the ball">
+        <canvas id="std-cv" aria-hidden="true"></canvas>
+        <div class="std__bar mono" aria-live="polite"><span id="std-count">6 / 6 principles on</span><span id="std-state">How AIM Labs ships</span></div>
+      </div>
+      <div class="std__ctrl">
+        <div class="std__pills" role="group" aria-label="Principles — switch one off to see what it protects"><button class="pp" role="switch" aria-checked="true" data-p="01" data-d="Only the data a defined question needs — here, the legs of the player on the ball."><i aria-hidden="true"></i><span class="mono">P.01</span>Data minimised</button><button class="pp" role="switch" aria-checked="true" data-p="02" data-d="What the system measures, and what it must never be used to infer."><i aria-hidden="true"></i><span class="mono">P.02</span>Purpose stated</button><button class="pp" role="switch" aria-checked="true" data-p="03" data-d="Every number carries its error and confidence — never “exact”."><i aria-hidden="true"></i><span class="mono">P.03</span>Uncertainty shown</button><button class="pp" role="switch" aria-checked="true" data-p="04" data-d="Consent on file for every young player; the system keeps an anonymous ID, never a name, age or school."><i aria-hidden="true"></i><span class="mono">P.04</span>Minors protected</button><button class="pp" role="switch" aria-checked="true" data-p="05" data-d="Outputs go to a coach for review — never straight to a child or parent."><i aria-hidden="true"></i><span class="mono">P.05</span>Human decides</button><button class="pp" role="switch" aria-checked="true" data-p="06" data-d="Known failure modes are stated next to the result."><i aria-hidden="true"></i><span class="mono">P.06</span>Limits documented</button></div>
+        <p class="std__desc"><span class="mono" id="std-dk">Responsible by design</span><span id="std-dv">Switch a principle off to see what it protects.</span><button class="std__reset mono" id="std-reset">Reset</button></p>
+      </div>
+    </div>
+
+    <div class="team">
+      <p class="mono team__k">The people behind it <span>Portraits to come</span></p>
+      <figure class="person"><div class="ph"><span class="mono">Portrait</span></div><figcaption><b>Name Surname</b><span>Head of Research</span><i class="mono">Computer vision</i></figcaption></figure>
+      <figure class="person"><div class="ph"><span class="mono">Portrait</span></div><figcaption><b>Name Surname</b><span>Lead Engineer</span><i class="mono">ML systems</i></figcaption></figure>
+      <figure class="person"><div class="ph"><span class="mono">Portrait</span></div><figcaption><b>Name Surname</b><span>Football Specialist</span><i class="mono">Coaching &amp; development</i></figcaption></figure>
+      <figure class="person"><div class="ph"><span class="mono">Portrait</span></div><figcaption><b>Name Surname</b><span>Behavioural Scientist</span><i class="mono">Learning design</i></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ========== INSIGHTS — a lab notebook you can filter and drag ========== -->
+<section class="insights dark" data-hud="LEARN" id="insights" aria-labelledby="ins-h">
+  <div class="wrap">
+    <div class="sec-head sec-head--split">
+      <div>
+        <p class="idx mono">09 / Insights</p>
+        <h2 id="ins-h" class="h2">Better questions.<br><span class="g">Better intelligence.</span></h2>
+      </div>
+      <p class="body">Research notes, explainers and project learning — each one labelled with the status of the work it describes.</p>
+    </div>
+    <div class="nbbar">
+      <div class="nbf mono" role="group" aria-label="Filter notes">
+        <button aria-pressed="true" data-f="all">All</button><button aria-pressed="false" data-f="research">Research notes</button><button aria-pressed="false" data-f="explainer">Explainers</button><button aria-pressed="false" data-f="learning">Project learning</button><button aria-pressed="false" data-f="standards">Standards</button>
+      </div>
+      <div class="nbnav"><span class="mono" id="nb-count">6 notes</span><button class="mono" id="nb-prev" aria-label="Scroll notes left">←</button><button class="mono" id="nb-next" aria-label="Scroll notes right">→</button></div>
+    </div>
+  </div>
+  <div class="nbrail" id="nb-rail" tabindex="0" aria-label="Research notes">
+        <a class="nb" href="#" data-t="research">
+          <span class="nb__img"><img src="assets/video/duel-f145.jpg" alt="" loading="lazy"><i class="nb__scan" aria-hidden="true"></i></span>
+          <span class="nb__meta mono"><span>Research note · 6 min</span><span class="tag tag--research">Research</span></span>
+          <b class="nb__t">What a turn tells us — and what it doesn’t.</b>
+          <span class="nb__x">Knee angles from one camera are an estimate. Here is where they help a coach, and where they mislead.</span>
+          <span class="nb__go mono">Read the note →</span>
+        </a>
+        <a class="nb" href="#" data-t="standards">
+          <span class="nb__img"><img src="assets/video/clip-04-match.jpg" alt="" loading="lazy"><i class="nb__scan" aria-hidden="true"></i></span>
+          <span class="nb__meta mono"><span>Explainer · 4 min</span><span class="tag tag--live">Standards</span></span>
+          <b class="nb__t">Why we publish our limitations.</b>
+          <span class="nb__x">A model that hides its failure modes is a model nobody should trust with young players.</span>
+          <span class="nb__go mono">Read the note →</span>
+        </a>
+        <a class="nb" href="#" data-t="learning">
+          <span class="nb__img"><img src="assets/video/clip-02-sand.jpg" alt="" loading="lazy"><i class="nb__scan" aria-hidden="true"></i></span>
+          <span class="nb__meta mono"><span>Project learning · 8 min</span><span class="tag tag--pilot">Pilot</span></span>
+          <b class="nb__t">Twelve weeks of session review in an academy.</b>
+          <span class="nb__x">What changed for coaches, what didn’t, and the one thing we would do differently.</span>
+          <span class="nb__go mono">Read the note →</span>
+        </a>
+        <a class="nb" href="#" data-t="research">
+          <span class="nb__img"><img src="assets/video/clip-04-match.jpg" alt="" loading="lazy"><i class="nb__scan" aria-hidden="true"></i></span>
+          <span class="nb__meta mono"><span>Research note · 5 min</span><span class="tag tag--validation">In validation</span></span>
+          <b class="nb__t">Counting the ball at night.</b>
+          <span class="nb__x">Detection fell from 93% of frames in daylight to 4% under floodlights. What we are testing next.</span>
+          <span class="nb__go mono">Read the note →</span>
+        </a>
+        <a class="nb" href="#" data-t="learning">
+          <span class="nb__img"><img src="assets/video/clip-03-park.jpg" alt="" loading="lazy"><i class="nb__scan" aria-hidden="true"></i></span>
+          <span class="nb__meta mono"><span>Project learning · 6 min</span><span class="tag tag--research">Stopped</span></span>
+          <b class="nb__t">Why we stopped predicting talent at U10.</b>
+          <span class="nb__x">The most-asked question we will not answer — and what we built instead.</span>
+          <span class="nb__go mono">Read the note →</span>
+        </a>
+        <a class="nb" href="#" data-t="explainer">
+          <span class="nb__img"><img src="assets/video/sand-f094.jpg" alt="" loading="lazy"><i class="nb__scan" aria-hidden="true"></i></span>
+          <span class="nb__meta mono"><span>Explainer · 3 min</span><span class="tag tag--live">Standards</span></span>
+          <b class="nb__t">Body-height units, not metres.</b>
+          <span class="nb__x">Without pitch calibration, metres are a guess. Relative units keep comparisons honest.</span>
+          <span class="nb__go mono">Read the note →</span>
+        </a>
+  </div>
+  <div class="wrap"><p class="nbnote mono">Titles and summaries are placeholders · only approved research is published</p></div>
+</section>
+
+<!-- ========== PARTNER — find the right route ========== -->
+<section class="partner paper" data-hud="APPLY" id="partner" aria-labelledby="partner-h">
+  <div class="wrap">
+    <div class="partner__top">
+      <div>
+        <p class="idx mono">10 / Partner with AIM Labs</p>
+        <h2 id="partner-h" class="h2 h2--xl">From possibility<br>to proof.</h2>
+      </div>
+      <p class="body">Not an ideas inbox. Pick the route that fits and we will tell you exactly what to bring.</p>
+    </div>
+    <div class="rf" id="rf">
+      <div class="rf__list" role="tablist" aria-label="Partnership routes"><button role="tab" aria-selected="true" data-r="0"><span class="mono">01</span>Research partnerships<i>→</i></button><button role="tab" aria-selected="false" data-r="1"><span class="mono">02</span>Technology collaboration<i>→</i></button><button role="tab" aria-selected="false" data-r="2"><span class="mono">03</span>Licensing & integration<i>→</i></button><button role="tab" aria-selected="false" data-r="3"><span class="mono">04</span>Football organisations<i>→</i></button><button role="tab" aria-selected="false" data-r="4"><span class="mono">05</span>Universities & students<i>→</i></button><button role="tab" aria-selected="false" data-r="5"><span class="mono">06</span>Careers<i>→</i></button></div>
+      <div class="rf__card" role="tabpanel" aria-live="polite">
+        <p class="mono rf__who" id="rf-who">—</p>
+        <h3 id="rf-t">—</h3>
+        <p class="rf__fit" id="rf-fit">—</p>
+        <div class="rf__cols">
+          <div><p class="mono">Bring us</p><ul id="rf-bring"></ul></div>
+          <div><p class="mono">What happens next</p><ol class="rf__next"><li><b>Read</b>A specialist reads it — not a sales inbox.</li><li><b>Reply</b>We say yes, not now, or who fits better.</li><li><b>Scope</b>A short call to agree question, data and roles.</li></ol></div>
+        </div>
+        <a class="btn btn--green rf__cta" id="rf-cta" href="#">Start this conversation</a>
+      </div>
+    </div>
+  </div>
+  <script type="application/json" id="rf-data">[["research", "Research partnerships", "You have a football question and the methods to test it with us.", ["A one-paragraph research question", "Who would lead it on your side", "Data you can bring, or need"], "Universities, institutes, research groups"], ["tech", "Technology collaboration", "Your hardware, platform or model could be tested or improved with AIM research.", ["What your technology does today", "What you want to prove", "How you handle data and consent"], "Technology and data companies"], ["licence", "Licensing & integration", "You want proven AIM capability inside a complementary product.", ["Your product and market", "The capability you are interested in", "Why it does not compete with AIM World"], "Complementary businesses only"], ["football", "Football organisations", "You want to pilot research in real sessions and matches.", ["Your club, academy or federation", "Age groups and environment", "Who will own the pilot"], "Clubs, academies, federations"], ["uni", "Universities & students", "You want a placement, a joint thesis or a data-sharing agreement.", ["Programme and supervisor", "Proposed topic", "Ethics approval route"], "Students and supervisors"], ["careers", "Careers", "You want to do serious technical work that reaches real football.", ["CV or portfolio", "The kind of problem you want", "Where you want to work from"], "Research, engineering, football specialists"]]</script>
+</section>
+
+</main>
+
+<!-- ========== FOOTER ========== -->
+<footer class="ftr dark">
+  <div class="wrap">
+    <div class="ftr__top">
+      <div class="ftr__brand">
+        <a class="logo" href="#"><svg class="logo__mark"><use href="#aim-mark"/></svg><span class="logo__word">AIM</span><span class="logo__labs">LABS</span></a>
+        <p>Innovation built for football.<br>Intelligence built to scale.</p>
+      </div>
+      <nav class="ftr__cols" aria-label="Footer">
+        <div><h4 class="mono">Explore</h4><a href="#research">Research &amp; Innovation</a><a href="#technology">Technology</a><a href="#validation">Validation</a><a href="#partnerships">Partnerships</a><a href="#insights">Insights</a><a href="#about">About</a></div>
+        <div><h4 class="mono">Partner</h4><a href="#">Research Partnerships</a><a href="#">Technology Collaboration</a><a href="#">Football Organisations</a><a href="#">Universities</a><a href="#">Careers</a><a href="#">Contact</a></div>
+        <div><h4 class="mono">Trust</h4><a href="#">Responsible AI</a><a href="#">Data &amp; Privacy</a><a href="#">Safeguarding</a><a href="#">Research Standards</a><a href="#">Accessibility</a></div>
+        <div><h4 class="mono">Legal</h4><a href="#">Privacy Policy</a><a href="#">Cookie Policy</a><a href="#">Terms of Use</a><a href="#">Intellectual Property</a></div>
+      </nav>
+    </div>
+    <div class="ftr__wordmark" aria-hidden="true">AIM LABS</div>
+    <div class="ftr__bot mono">
+      <span>© 2026 AIM Labs · An AIM World business</span>
+      <span>Entity details to be confirmed before launch</span>
+      <a href="#">← AIM World</a>
+    </div>
+  </div>
+</footer>
+
+
+<script src="hero.js"></script>
+<script src="sections.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
