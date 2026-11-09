@@ -13,3 +13,25 @@ model output stored next to each clip (`assets/video/<clip>.json`).
 
 Model: off-the-shelf YOLO11 (pose / COCO detection) + ByteTrack. It is shown on the site as
 an illustration of the machine view — not as an AIM Labs validated result.
+
+# Iteration 2 hero film
+
+`assets/video/run.mp4` (1280×720) and `run-m.mp4` (540×960, framing follows the action) are one hard-cut montage from the AIM film, with the speed ramp and grade baked in. Edit the cut list at the top of `tools/hero_film.swift`, then:
+
+`swiftc -O tools/hero_film.swift -o /tmp/hero_film && /tmp/hero_film`
+
+macOS only (AVFoundation + Core Image). Paths to the source film and output folder are at the top and bottom of the script.
+
+# Section 03 ghost
+
+`assets/video/why-run.mp4` is B-roll 1:43.8–1:47.9 at 0.8×, same grade as the hero film. `why-run.json` holds the runner's outline per frame:
+
+`swiftc -O tools/ghost_contours.swift -o /tmp/ghost && /tmp/ghost assets/video/why-run.mp4 assets/video/why-run.json 0.6 0.64`
+
+The last two numbers are a point on the player in the first frame. Uses macOS Vision person segmentation. Some frames come back incomplete; `motion.js` skips those for the ghost.
+
+# Section 07 photo finish
+
+`assets/video/photo-finish.jpg` is a real slit scan: one vertical slit of B-roll 1:49–1:57.5, read across time, then graded.
+
+`swiftc -O tools/slit_scan.swift -o /tmp/slit && /tmp/slit SOURCE.mp4 out.jpg 0.6 6 109 117.5`

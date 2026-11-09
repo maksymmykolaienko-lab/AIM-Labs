@@ -34,46 +34,6 @@
   menu.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
   addEventListener('keydown', e => { if (e.key === 'Escape' && menu.classList.contains('open')) setMenu(false); });
 
-  /* ---------- Optics: Human ↔ Machine (site-wide) ---------- */
-  const opticBtns = document.querySelectorAll('.optics__b');
-  const setOptic = (o, save) => {
-    document.body.classList.toggle('optic-machine', o === 'machine');
-    opticBtns.forEach(b => b.setAttribute('aria-pressed', b.dataset.optic === o));
-    if (save) { try { localStorage.setItem('aim-optic', o); } catch (e) {} }
-  };
-  opticBtns.forEach(b => b.addEventListener('click', () => setOptic(b.dataset.optic, true)));
-  const qOptic = new URLSearchParams(location.search).get('optic');
-  if (qOptic === 'machine' || qOptic === 'human') setOptic(qOptic);
-  else { try { const o = localStorage.getItem('aim-optic'); if (o) setOptic(o); } catch (e) {} }
-
-  /* ---------- HUD timecode: the page as one episode ---------- */
-  const hudF = document.getElementById('hud-f'), hudN = document.getElementById('hud-n'), hudS = document.getElementById('hud-s'), hudBar = document.getElementById('hud-bar');
-  const heroEl = document.getElementById('hero');
-  const hudSections = [...document.querySelectorAll('[data-hud]')];
-  const hudTick = () => {
-    const heroR = heroEl.getBoundingClientRect();
-    const inHero = heroR.bottom > innerHeight * .45 && window.AIMHero;
-    let f, label, prog;
-    if (inHero) {
-      const n = window.AIMHero.total();
-      f = window.AIMHero.frame(); label = window.AIMHero.clip().toUpperCase(); prog = f / Math.max(1, n - 1);
-      if (hudN.textContent !== String(n)) hudN.textContent = n;
-    } else {
-      const max = document.documentElement.scrollHeight - innerHeight;
-      prog = Math.max(0, Math.min(1, scrollY / (max || 1)));
-      f = Math.round(prog * 150);
-      if (hudN.textContent !== '150') hudN.textContent = '150';
-      const mid = innerHeight * .5;
-      const cur = hudSections.find(s => { const r = s.getBoundingClientRect(); return r.top <= mid && r.bottom > mid; });
-      label = cur ? cur.dataset.hud : '';
-    }
-    hudF.textContent = String(f).padStart(3, '0');
-    if (hudS.textContent !== label) hudS.textContent = label;
-    hudBar.style.width = (prog * 100).toFixed(1) + '%';
-    requestAnimationFrame(hudTick);
-  };
-  if (hudF) requestAnimationFrame(hudTick);
-
   /* ---------- Funnel: every thread is a project; pick one to see its validation passport ---------- */
   // Illustrative portfolio. fate = last gate reached (1..4, 4 = applied); stop = validation step
   // where it stopped (index into the 8-step model), or -1 when applied.
@@ -98,60 +58,11 @@
     ['Referee positioning', 'Football intelligence', 'Where should a grassroots referee stand?', 1, 0, 'Not AIM Labs’ question to answer. Shared with a partner instead.', 'Introduced a partner instead of new research.']
   ];
   const STAGES = ['', 'Stopped in Explore', 'Stopped in Validate', 'Stopped in Translate', 'Applied across AIM World'];
-  const threads = document.getElementById('threads');
-  if (threads) {
-    const GX = [40, 300, 600, 900, 1160];
-    const END_Y = 175;
-    const rnd = (a => () => (a = (a * 9301 + 49297) % 233280) / 233280)(7);   // deterministic
+  if (document.getElementById('pp-run')) {
     const lanes = PROJECTS.length;
-    const ys = Array.from({ length: lanes }, (_, i) => 30 + i * (280 / (lanes - 1)));
-    const converge = (y, k) => y + (END_Y - y) * k;
-    const drawEls = [], groups = [];
-    ys.forEach((y0, i) => {
-      const fate = PROJECTS[i][3];
-      let d = `M${GX[0]} ${y0}`, y = y0;
-      for (let g = 1; g <= fate; g++) {
-        const k = [0, .45, .75, .93, 1][g];
-        const ny = converge(y0, k) + (g < 4 ? (rnd() - .5) * 10 : 0);
-        const x0 = GX[g - 1], x1 = fate === g && g < 4 ? GX[g] - 18 : GX[g];
-        d += ` C ${x0 + (x1 - x0) * .5} ${y}, ${x0 + (x1 - x0) * .5} ${ny}, ${x1} ${ny}`;
-        y = ny;
-      }
-      const grp = el('g', { class: 'thread', 'data-i': i }, threads);
-      const p = el('path', { d, class: fate === 4 ? 't-win' : fate >= 2 ? 't-go' : 't-stop' }, grp);
-      el('path', { d, class: 'hit' }, grp);                 // wide invisible hit area
-      drawEls.push(p);
-      el('circle', { cx: GX[0], cy: y0, r: 3.5, class: 'start' }, grp);
-      if (fate < 4) {
-        const x = GX[fate] - 12;
-        const g = el('g', { class: 'x', opacity: 0 }, grp);
-        el('line', { x1: x - 4, y1: y - 4, x2: x + 4, y2: y + 4 }, g);
-        el('line', { x1: x - 4, y1: y + 4, x2: x + 4, y2: y - 4 }, g);
-        drawEls.push(g);
-      }
-      groups.push(grp);
-    });
-    el('circle', { cx: GX[4], cy: END_Y, r: 9, class: 'end' }, threads);
-    const lbl = el('text', { x: GX[4] - 4, y: END_Y - 22, 'text-anchor': 'end', fill: '#1F6E0B', style: 'font:500 11px var(--f-mono);letter-spacing:.06em' }, threads);
-    lbl.textContent = 'APPLIED';
-    ['GATE · EVIDENCE', 'GATE · VALIDATED', 'GATE · DEPLOY?'].forEach((t, i) => {
-      const n = el('text', { x: GX[i + 1] + 6, y: 16, style: 'font:500 10px var(--f-mono);letter-spacing:.06em', fill: '#545C53' }, threads);
-      n.textContent = t;
-    });
-
-    const paths = drawEls.filter(n => n.tagName === 'path');
-    paths.forEach(p => { const l = p.getTotalLength(); p.style.strokeDasharray = l; p.style.strokeDashoffset = reduce ? 0 : l; });
-    const play = () => {
-      paths.forEach((p, i) => { p.style.transition = `stroke-dashoffset 1.8s cubic-bezier(.2,.7,.1,1) ${i * 0.04}s`; p.style.strokeDashoffset = 0; });
-      drawEls.filter(n => n.tagName === 'g').forEach((g, i) => { g.style.transition = `opacity .4s ${1.2 + i * .04}s`; g.setAttribute('opacity', 1); });
-      setTimeout(() => paths.forEach(p => { p.style.strokeDasharray = 'none'; }), 2800);
-    };
-    if (reduce) play();
-    else new IntersectionObserver(([e], o) => { if (e.isIntersecting) { play(); o.disconnect(); } }, { threshold: .35 }).observe(threads.closest('svg'));
 
     // passport: a project runs the 8 validation gates; the stop gate drops a barrier and explains itself
     const $ = id => document.getElementById(id);
-    const svg = threads.closest('svg');
     const gates = [...document.querySelectorAll('#pp-gates .gate')], run = $('pp-run'), token = $('pp-token'), why = $('pp-why'), end = $('pp-end');
     const pick = $('pp-pick');
     const GROUPS = [[4, 'Applied'], [3, 'Stopped in Translate'], [2, 'Stopped in Validate'], [1, 'Stopped in Explore']];
@@ -171,14 +82,13 @@
     // waiting = the token stops just short of the barrier instead of covering the gate
     const moveToken = (el, waiting) => {
       let [x, y] = place(dotOf(el));
-      if (waiting) x -= narrow.matches ? 18 : 30;
+      if (waiting) x -= narrow.matches ? 14 : 40;
       token.style.transform = `translate(${x}px, ${y}px)`;
     };
     const show = (i, animate = !reduce) => {
       cur = (i + lanes) % lanes;
       const [name, area, q, fate, stop, out, fedTxt] = PROJECTS[cur];
       timers.forEach(clearTimeout); timers = [];
-      groups.forEach((g, k) => g.classList.toggle('is-sel', k === cur)); svg.classList.add('has-sel');
       pickBtns.forEach(b => b.classList.toggle('is-sel', +b.dataset.i === cur));
       showGroup(fate);
       $('pp-i').textContent = `${String(cur + 1).padStart(2, '0')} / ${lanes}`;
@@ -216,7 +126,6 @@
       for (let s2 = 0; s2 < passN; s2++) timers.push(setTimeout(() => { moveToken(gates[s2]); timers.push(setTimeout(() => gates[s2].classList.add('is-pass'), 180)); }, 120 + s2 * STEP));
       timers.push(setTimeout(finish, 120 + passN * STEP + 80));
     };
-    groups.forEach((g, k) => { g.addEventListener('click', () => show(k)); g.addEventListener('mouseenter', () => { if (k !== cur) show(k); }); });
     pickBtns.forEach(b => b.addEventListener('click', () => show(+b.dataset.i)));
     $('pp-prev').addEventListener('click', () => show(cur - 1));
     $('pp-next').addEventListener('click', () => show(cur + 1));
@@ -225,17 +134,6 @@
     show(cur, false);
     new IntersectionObserver(([e], o) => { if (e.isIntersecting) { show(4); o.disconnect(); } }, { threshold: .5 }).observe(run);
   }
-
-  /* ---------- 07 Proof: flip a claim to see its evidence ---------- */
-  document.querySelectorAll('[data-flip]').forEach(card => {
-    card.querySelectorAll('.claim2__btn').forEach(b => b.addEventListener('click', () => {
-      const on = card.classList.toggle('is-flipped');
-      const face = card.querySelector(on ? '.claim2__back' : '.claim2__front');
-      card.querySelector('.claim2__front').inert = on; card.querySelector('.claim2__back').inert = !on;
-      setTimeout(() => face.querySelector('.claim2__btn').focus({ preventScroll: true }), 500);
-    }));
-    card.querySelector('.claim2__back').inert = true;
-  });
 
   /* ---------- 07 Partnerships: fit check (illustrative examples) ---------- */
   const fit = document.getElementById('fitcheck');
@@ -311,55 +209,6 @@
     }));
     set(0);
   }
-
-  /* ---------- Gap arc draw ---------- */
-  document.querySelectorAll('.js-draw').forEach(p => {
-    const l = p.getTotalLength();
-    p.style.strokeDasharray = l; p.style.strokeDashoffset = reduce ? 0 : l;
-    new IntersectionObserver(([e], o) => {
-      if (e.isIntersecting) { p.style.transition = 'stroke-dashoffset 1.6s cubic-bezier(.2,.7,.1,1)'; p.style.strokeDashoffset = 0; o.disconnect(); }
-    }, { threshold: .6 }).observe(p.closest('svg'));
-  });
-
-  /* ---------- Parallax (light): data-parallax="factor", origin = section top or viewport centre ---------- */
-  const pxEls = [...document.querySelectorAll('[data-parallax]')];
-  if (pxEls.length && !reduce) {
-    const pxTick = () => {
-      const vh = innerHeight;
-      for (const el of pxEls) {
-        // phones: the hero stacks video above copy, so parallax there would fade the copy into an empty gap
-        if (innerWidth < 700 && el.closest('#hero')) { el.style.transform = ''; el.style.opacity = ''; continue; }
-        const host = el.closest('section') || el.parentElement;
-        const r = host.getBoundingClientRect();
-        if (r.bottom < -100 || r.top > vh + 100) continue;
-        const d = el.dataset.pxOrigin === 'top' ? r.top : r.top + r.height / 2 - vh / 2;
-        el.style.transform = `translate3d(0, ${(d * +el.dataset.parallax).toFixed(1)}px, 0)`;
-        if (el.dataset.pxFade) el.style.opacity = Math.max(0, Math.min(1, 1 + r.top / (vh * .75))).toFixed(3);
-      }
-    };
-    let pxRaf = 0;
-    addEventListener('scroll', () => { if (!pxRaf) pxRaf = requestAnimationFrame(() => { pxRaf = 0; pxTick(); }); }, { passive: true });
-    addEventListener('resize', pxTick); pxTick();
-  }
-
-  /* ---------- Counters ---------- */
-  const counters = document.querySelectorAll('.num[data-count]');
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      io.unobserve(e.target);
-      const n = e.target, to = +n.dataset.count, suf = n.dataset.suffix || '';
-      if (reduce) { n.textContent = String(to).padStart(2, '0') + suf; return; }
-      const t0 = performance.now(), D = 1400;
-      const step = now => {
-        const k = Math.min(1, (now - t0) / D), v = Math.round(to * (1 - Math.pow(1 - k, 3)));
-        n.textContent = String(v).padStart(2, '0') + suf;
-        if (k < 1) requestAnimationFrame(step);
-      };
-      requestAnimationFrame(step);
-    });
-  }, { threshold: .5 });
-  counters.forEach(c => io.observe(c));
 
   /* ---------- Scroll reveal ---------- */
   if (!reduce) {
