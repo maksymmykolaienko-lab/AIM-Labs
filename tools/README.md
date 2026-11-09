@@ -35,3 +35,7 @@ The last two numbers are a point on the player in the first frame. Uses macOS Vi
 `assets/video/photo-finish.jpg` is a real slit scan: one vertical slit of B-roll 1:49–1:57.5, read across time, then graded.
 
 `swiftc -O tools/slit_scan.swift -o /tmp/slit && /tmp/slit SOURCE.mp4 out.jpg 0.6 6 109 117.5`
+
+# Insights illustrations
+
+`assets/notes/note-1.jpg` … `note-6.jpg` are drawn by `tools/note-grabs.html` from real AIM frames and the model JSON (knee angle, low-confidence detections, possession changes, ball-found rates, body-height scale are all computed there, not typed). To rebuild: serve the project, open http://127.0.0.1:5180/tools/note-grabs.html, and save each canvas as JPEG (the session used a headless-Chrome script that calls `canvas.toDataURL('image/jpeg', .82)`). `assets/notes/duel-f145-src.jpg` is frame 145 of `clip-01-duel.mp4`, matching the JSON exactly.

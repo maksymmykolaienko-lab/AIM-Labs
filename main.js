@@ -10,30 +10,6 @@
     return n;
   };
 
-  /* ---------- Header: bar → capsule on scroll ---------- */
-  const hdr = document.getElementById('hdr');
-  const onScroll = () => hdr.classList.toggle('is-compact', scrollY > 60);
-  addEventListener('scroll', onScroll, { passive: true }); onScroll();
-
-  /* ---------- Menu: opens like the lens, from the button ---------- */
-  const menu = document.getElementById('menu'), menuBtn = document.getElementById('menu-btn');
-  let lastFocus = null;
-  const setMenu = open => {
-    const r = menuBtn.querySelector('.menu-btn__icon').getBoundingClientRect();
-    menu.style.setProperty('--mx', (r.left + r.width / 2) + 'px');
-    menu.style.setProperty('--my', (r.top + r.height / 2) + 'px');
-    menu.classList.toggle('open', open);
-    menu.inert = !open;
-    menuBtn.setAttribute('aria-expanded', open);
-    hdr.classList.toggle('menu-open', open);
-    document.body.classList.toggle('menu-lock', open);
-    if (open) { lastFocus = document.activeElement; setTimeout(() => menu.querySelector('a')?.focus({ preventScroll: true }), 350); }
-    else if (lastFocus) lastFocus.focus({ preventScroll: true });
-  };
-  menuBtn.addEventListener('click', () => setMenu(!menu.classList.contains('open')));
-  menu.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
-  addEventListener('keydown', e => { if (e.key === 'Escape' && menu.classList.contains('open')) setMenu(false); });
-
   /* ---------- Funnel: every thread is a project; pick one to see its validation passport ---------- */
   // Illustrative portfolio. fate = last gate reached (1..4, 4 = applied); stop = validation step
   // where it stopped (index into the 8-step model), or -1 when applied.
@@ -68,7 +44,7 @@
     const GROUPS = [[4, 'Applied'], [3, 'Stopped in Translate'], [2, 'Stopped in Validate'], [1, 'Stopped in Explore']];
     pick.innerHTML = GROUPS.map(([f, t]) => `<div class="pick__g pick__g--${f}"><p class="mono">${t} · ${PROJECTS.filter(p => p[3] === f).length}</p><div>${PROJECTS.map((p, i) => p[3] === f ? `<button class="pick__b" data-i="${i}">${p[0]}</button>` : '').join('')}</div></div>`).join('');
     // phones: choose the outcome first, then a project of that outcome
-    pick.insertAdjacentHTML('afterbegin', `<div class="pick__tabs" role="tablist" aria-label="Outcome">${GROUPS.map(([f, t]) => `<button role="tab" class="pick__tab pick__tab--${f}" data-f="${f}"><span>${t.replace('Stopped in ', '')}</span><b>${PROJECTS.filter(p => p[3] === f).length}</b></button>`).join('')}</div>`);
+    pick.insertAdjacentHTML('afterbegin', `<div class="pick__tabs" role="tablist" aria-label="Outcome">${GROUPS.map(([f, t]) => `<button role="tab" class="pick__tab pick__tab--${f}" data-f="${f}"><b>${PROJECTS.filter(p => p[3] === f).length}</b><span>${t}</span></button>`).join('')}</div>`);
     const tabsF = [...pick.querySelectorAll('.pick__tab')], groupsF = [...pick.querySelectorAll('.pick__g')];
     const showGroup = f => {
       tabsF.forEach(t => t.setAttribute('aria-selected', +t.dataset.f === f));
@@ -126,7 +102,8 @@
       for (let s2 = 0; s2 < passN; s2++) timers.push(setTimeout(() => { moveToken(gates[s2]); timers.push(setTimeout(() => gates[s2].classList.add('is-pass'), 180)); }, 120 + s2 * STEP));
       timers.push(setTimeout(finish, 120 + passN * STEP + 80));
     };
-    pickBtns.forEach(b => b.addEventListener('click', () => show(+b.dataset.i)));
+    const toRun = () => { const t = document.getElementById('pp-name').closest('.passport__title'); const r = t.getBoundingClientRect(); if (r.top < 40 || r.top > innerHeight * .55) t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); };
+    pickBtns.forEach(b => b.addEventListener('click', () => { show(+b.dataset.i); toRun(); }));
     $('pp-prev').addEventListener('click', () => show(cur - 1));
     $('pp-next').addEventListener('click', () => show(cur + 1));
     $('pp-replay').addEventListener('click', () => show(cur));
@@ -172,6 +149,9 @@
       const f = b.dataset.f;
       fbtn.forEach(x => x.setAttribute('aria-pressed', x === b));
       let n = 0; notes.forEach(c => { const show = f === 'all' || c.dataset.t === f; c.hidden = !show; if (show) n++; });
+      // the first note of the selection leads, big
+      notes.forEach(c => c.classList.remove('is-lead')); notes.find(c => !c.hidden)?.classList.add('is-lead');
+      notes.forEach((c, k) => { c.classList.remove('is-in'); void c.offsetWidth; c.classList.add('is-in'); });
       document.getElementById('nb-count').textContent = `${n} note${n === 1 ? '' : 's'}`;
       rail.scrollTo({ left: 0 });
     }));
@@ -191,23 +171,45 @@
     const R = JSON.parse(document.getElementById('rf-data').textContent);
     const tabs = [...rf.querySelectorAll('[role=tab]')], card = rf.querySelector('.rf__card');
     const CTA = ['Start a research conversation', 'Propose a collaboration', 'Ask about licensing', 'Plan a pilot', 'Talk to the research team', 'See open roles'];
+    const meter = [...document.querySelectorAll('#rf-meter i')], ready = document.getElementById('rf-ready'), cta = document.getElementById('rf-cta');
+    let cur = 0;
+    // "Bring us" is a checklist: each ticked item fills one segment of the readiness bar
+    const count = () => {
+      const ticks = [...card.querySelectorAll('.rf__tick')], n = ticks.filter(t => t.getAttribute('aria-pressed') === 'true').length;
+      meter.forEach((m, k) => m.classList.toggle('on', k < n));
+      ready.textContent = n === ticks.length ? 'Ready to start' : `${n} of ${ticks.length} ready`;
+      card.classList.toggle('is-ready', n === ticks.length);
+      cta.textContent = (n === ticks.length ? 'Ready — ' : '') + CTA[cur];
+    };
     const set = (i, anim) => {
+      cur = i;
       tabs.forEach((t, k) => t.setAttribute('aria-selected', k === i));
       const fill = () => {
         const [, title, fit, bring, who] = R[i];
         document.getElementById('rf-who').textContent = who; document.getElementById('rf-t').textContent = title;
         document.getElementById('rf-fit').textContent = fit;
-        document.getElementById('rf-bring').innerHTML = bring.map(x => `<li>${x}</li>`).join('');
-        document.getElementById('rf-cta').textContent = CTA[i];
-        card.classList.remove('is-swap');
+        document.getElementById('rf-big').innerHTML = tabs[i].querySelector('svg').outerHTML;
+        document.getElementById('rf-bring').innerHTML = bring.map((x, k) => `<li style="--o:${k + 3}"><button type="button" class="rf__tick" aria-pressed="false"><i aria-hidden="true"></i>${x}</button></li>`).join('');
+        count();
+        card.classList.remove('is-swap', 'is-fresh');
+        if (anim && !reduce) { void card.offsetWidth; card.classList.add('is-fresh'); }
       };
       if (anim && !reduce) { card.classList.add('is-swap'); setTimeout(fill, 220); } else fill();
     };
+    card.addEventListener('click', e => {
+      const t = e.target.closest('.rf__tick'); if (!t) return;
+      t.setAttribute('aria-pressed', t.getAttribute('aria-pressed') !== 'true'); count();
+    });
     tabs.forEach((t, i) => t.addEventListener('click', () => {
       set(i, true);
       const row = t.parentElement; if (row.scrollWidth > row.clientWidth) row.scrollTo({ left: Math.max(0, row.scrollLeft + t.getBoundingClientRect().left - row.getBoundingClientRect().left - 16), behavior: reduce ? 'auto' : 'smooth' });
     }));
     set(0);
+    if (!reduce) {   // the card's parts arrive in order the first time it comes into view
+      card.classList.add('js-wait');
+      const io = new IntersectionObserver(es => { if (es[0].isIntersecting) { card.classList.remove('js-wait'); card.classList.add('is-fresh'); io.disconnect(); } }, { rootMargin: '0px 0px -20% 0px' });
+      io.observe(card);
+    }
   }
 
   /* ---------- Scroll reveal ---------- */

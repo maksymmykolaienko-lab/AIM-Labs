@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Insights — AIM Labs</title>
+<meta name="description" content="Better questions, better intelligence: research notes, explainers and project learning.">
+<link rel="icon" href="assets/aim-mark.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="motion.css?v=5">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="aim-mark" viewBox="0 0 36 36"><path d="M9.46282 6.94062H15.0889V13.4681L9.46282 19.6404V6.94062ZM26.08 1.41602L20.712 7.30475V1.41602H3.84277V29.051L9.46282 34.5816V27.8332L15.0889 21.661V34.5786H20.709V15.4976L26.329 9.33134V34.5846L31.9551 29.054V1.41602H26.077H26.08Z" fill="currentColor"/></symbol>
+</svg>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<nav class="dock" id="dock" aria-label="Site">
+  <div class="dock__bar">
+    <a class="dock__home" href="index.html" aria-label="AIM Labs home"><svg class="logo__mark" aria-hidden="true"><use href="#aim-mark"/></svg><span class="dock__word">AIM <b>Labs</b></span></a>
+    <button class="dock__now" id="dock-now" aria-expanded="false" aria-controls="dock-list"><span class="mono">05</span>Insights<i aria-hidden="true"></i></button>
+    <ol class="dock__list" id="dock-list"><li><a href="research.html"><span class="mono">01</span>Research</a></li><li><a href="technology.html"><span class="mono">02</span>Technology</a></li><li><a href="validation.html"><span class="mono">03</span>Validation</a></li><li><a href="partnerships.html"><span class="mono">04</span>Partnerships</a></li><li class="is-cur"><a href="insights.html" aria-current="page"><span class="mono">05</span>Insights</a></li><li><a href="about.html"><span class="mono">06</span>About</a></li></ol>
+    <a class="dock__cta" href="partner.html">Partner</a>
+  </div>
+  <i class="dock__lane" aria-hidden="true"><i id="lane"></i></i>
+</nav>
+
+<main id="main" class="page page--insights">
+
+<!-- ========== 09 INSIGHTS — a training log: entries in order, each with its status ========== -->
+<section class="logsec dark" id="insights" aria-labelledby="ins-h">
+  <div class="wrap">
+    <div class="logsec__head">
+      <div>
+        <p class="idx mono">05 / Insights</p>
+        <h1 id="ins-h" class="kin board__h"><span class="mv-rows"><span class="mv-row" style="--i:0">Better questions.</span> <span class="mv-row mv-row--g" style="--i:1">Better intelligence.</span></span></h1>
+      </div>
+      <p class="body">Research notes, explainers and project learning — each one labelled with the status of the work it describes.</p>
+    </div>
+    <div class="nbbar">
+      <div class="nbf mono" role="group" aria-label="Filter notes">
+        <button aria-pressed="true" data-f="all"><svg class="nbf__g" viewBox="0 0 44 44" aria-hidden="true"><path d="M8 10h28M8 18h28M8 26h20M8 34h14"/></svg><b>6</b><span>All notes</span></button><button aria-pressed="false" data-f="research"><svg class="nbf__g" viewBox="0 0 44 44" aria-hidden="true"><circle cx="19" cy="19" r="11"/><path d="M27 27l11 11"/><path d="M14 19h10M19 14v10"/></svg><b>2</b><span>Research notes</span></button><button aria-pressed="false" data-f="explainer"><svg class="nbf__g" viewBox="0 0 44 44" aria-hidden="true"><path d="M22 5a11 11 0 0 0-6 20v5h12v-5a11 11 0 0 0-6-20z"/><path d="M17 35h10M19 40h6"/></svg><b>1</b><span>Explainers</span></button><button aria-pressed="false" data-f="learning"><svg class="nbf__g" viewBox="0 0 44 44" aria-hidden="true"><path d="M6 6v32h32"/><path d="M12 30l8-9 6 5 10-13"/><path d="M30 13h6v6"/></svg><b>2</b><span>Project learning</span></button><button aria-pressed="false" data-f="standards"><svg class="nbf__g" viewBox="0 0 44 44" aria-hidden="true"><path d="M22 4l15 6v10c0 10-7 16-15 20C14 36 7 30 7 20V10z"/><path d="M15 22l5 5 9-10"/></svg><b>1</b><span>Standards</span></button>
+      </div>
+      <div class="nbnav"><span class="mono" id="nb-count">6 notes</span><button class="mono" id="nb-prev" aria-label="Scroll notes left">←</button><button class="mono" id="nb-next" aria-label="Scroll notes right">→</button></div>
+    </div>
+  </div>
+  <div class="wrap"><div class="nbrail log" id="nb-rail" aria-label="Research notes">
+        <a class="nb is-lead" href="#" data-t="research">
+          <span class="nb__n" aria-hidden="true">01</span>
+          <span class="nb__img"><img src="assets/notes/note-1.jpg" alt="A player mid-turn with his pose drawn on: one knee angle, about 111 degrees, marked as a 2D estimate from one camera." loading="lazy"><i class="nb__scan" aria-hidden="true"></i></span>
+          <span class="nb__meta mono"><span class="nb__type"><svg class="nb__g" viewBox="0 0 44 44" aria-hidden="true"><circle cx="19" cy="19" r="11"/><path d="M27 27l11 11"/><path d="M14 19h10M19 14v10"/></svg>Research note · 6 min</span><span class="tag tag--research">Research</span></span>
+          <b class="nb__t">What a turn tells us — and what it doesn’t.</b>
+          <span class="nb__x">Knee angles from one camera are an estimate. Here is where they help a coach, and where they mislead.</span>
+          <span class="nb__go mono">Read the note →</span>
+        </a>
+        <a class="nb" href="#" data-t="standards">
+          <span class="nb__n" aria-hidden="true">02</span>
+          <span class="nb__img"><img src="assets/notes/note-2.jpg" alt="A floodlit night match with the model's boxes: eight of twenty detections fall below 0.5 confidence and are marked red, beside a list of known limits." loading="lazy"><i class="nb__scan" aria-hidden="true"></i></span>
+          <span class="nb__meta mono"><span class="nb__type"><svg class="nb__g" viewBox="0 0 44 44" aria-hidden="true"><path d="M22 4l15 6v10c0 10-7 16-15 20C14 36 7 30 7 20V10z"/><path d="M15 22l5 5 9-10"/></svg>Explainer · 4 min</span><span class="tag tag--live">Standards</span></span>
+          <b class="nb__t">Why we publish our limitations.</b>
+          <span class="nb__x">A model that hides its failure modes is a model nobody should trust with young players.</span>
+          <span class="nb__go mono">Read the note →</span>
+        </a>
+        <a class="nb" href="#" data-t="learning">
+          <span class="nb__n" aria-hidden="true">03</span>
+          <span class="nb__img"><img src="assets/notes/note-3.jpg" alt="A sand-pitch game with a timeline of five auto-clipped moments, one for each change of possession." loading="lazy"><i class="nb__scan" aria-hidden="true"></i></span>
+          <span class="nb__meta mono"><span class="nb__type"><svg class="nb__g" viewBox="0 0 44 44" aria-hidden="true"><path d="M6 6v32h32"/><path d="M12 30l8-9 6 5 10-13"/><path d="M30 13h6v6"/></svg>Project learning · 8 min</span><span class="tag tag--pilot">Pilot</span></span>
+          <b class="nb__t">Twelve weeks of session review in an academy.</b>
+          <span class="nb__x">What changed for coaches, what didn’t, and the one thing we would do differently.</span>
+          <span class="nb__go mono">Read the note →</span>
+        </a>
+        <a class="nb" href="#" data-t="research">
+          <span class="nb__n" aria-hidden="true">04</span>
+          <span class="nb__img"><img src="assets/notes/note-4.jpg" alt="Split frame: on a sunny sand pitch the ball is found in 93% of frames; under floodlights, in 4%." loading="lazy"><i class="nb__scan" aria-hidden="true"></i></span>
+          <span class="nb__meta mono"><span class="nb__type"><svg class="nb__g" viewBox="0 0 44 44" aria-hidden="true"><circle cx="19" cy="19" r="11"/><path d="M27 27l11 11"/><path d="M14 19h10M19 14v10"/></svg>Research note · 5 min</span><span class="tag tag--validation">In validation</span></span>
+          <b class="nb__t">Counting the ball at night.</b>
+          <span class="nb__x">Detection fell from 93% of frames in daylight to 4% under floodlights. What we are testing next.</span>
+          <span class="nb__go mono">Read the note →</span>
+        </a>
+        <a class="nb" href="#" data-t="learning">
+          <span class="nb__n" aria-hidden="true">05</span>
+          <span class="nb__img"><img src="assets/notes/note-5.jpg" alt="Children playing in a park; a talent score next to one child is struck through: not a question we answer for under-10s." loading="lazy"><i class="nb__scan" aria-hidden="true"></i></span>
+          <span class="nb__meta mono"><span class="nb__type"><svg class="nb__g" viewBox="0 0 44 44" aria-hidden="true"><path d="M6 6v32h32"/><path d="M12 30l8-9 6 5 10-13"/><path d="M30 13h6v6"/></svg>Project learning · 6 min</span><span class="tag tag--stopped">Stopped</span></span>
+          <b class="nb__t">Why we stopped predicting talent at U10.</b>
+          <span class="nb__x">The most-asked question we will not answer — and what we built instead.</span>
+          <span class="nb__go mono">Read the note →</span>
+        </a>
+        <a class="nb" href="#" data-t="explainer">
+          <span class="nb__n" aria-hidden="true">06</span>
+          <span class="nb__img"><img src="assets/notes/note-6.jpg" alt="A running player measured in body heights: a 1.00 body-height scale and a stride of about 0.55 body heights, with no metres." loading="lazy"><i class="nb__scan" aria-hidden="true"></i></span>
+          <span class="nb__meta mono"><span class="nb__type"><svg class="nb__g" viewBox="0 0 44 44" aria-hidden="true"><path d="M22 5a11 11 0 0 0-6 20v5h12v-5a11 11 0 0 0-6-20z"/><path d="M17 35h10M19 40h6"/></svg>Explainer · 3 min</span><span class="tag tag--live">Standards</span></span>
+          <b class="nb__t">Body-height units, not metres.</b>
+          <span class="nb__x">Without pitch calibration, metres are a guess. Relative units keep comparisons honest.</span>
+          <span class="nb__go mono">Read the note →</span>
+        </a>
+  </div></div>
+  <div class="wrap"><p class="nbnote mono">Titles and summaries are placeholders · only approved research is published</p></div>
+</section>
+
+<!-- ========== NEXT LEG — hand the baton to the next page ========== -->
+<section class="nextleg" aria-label="Next page">
+  <a class="wrap nextleg__go" href="about.html">
+    <span class="mono">Next leg · 06</span>
+    <b>People &amp; Standards <i aria-hidden="true">→</i></b>
+    <span class="nextleg__line">Six lines that never move.</span>
+  </a>
+</section>
+
+</main>
+
+<footer class="ftr dark ftr--cut">
+  <div class="wrap">
+    <div class="ftr__top">
+      <div class="ftr__brand">
+        <a class="logo" href="index.html"><svg class="logo__mark"><use href="#aim-mark"/></svg><span class="logo__word">AIM</span><span class="logo__labs">LABS</span></a>
+        <p>Innovation built for football.<br>Intelligence built to scale.</p>
+      </div>
+      <nav class="ftr__cols" aria-label="Footer">
+        <div><h4 class="mono">Explore</h4><a href="research.html">Research &amp; Innovation</a><a href="technology.html">Technology</a><a href="validation.html">Validation</a><a href="partnerships.html">Partnerships</a><a href="insights.html">Insights</a><a href="about.html">About</a></div>
+        <div><h4 class="mono">Partner</h4><a href="partner.html">Research Partnerships</a><a href="partner.html">Technology Collaboration</a><a href="partner.html">Football Organisations</a><a href="partner.html">Universities</a><a href="partner.html">Careers</a><a href="partner.html">Contact</a></div>
+        <div><h4 class="mono">Trust</h4><a href="#">Responsible AI</a><a href="#">Data &amp; Privacy</a><a href="#">Safeguarding</a><a href="#">Research Standards</a><a href="#">Accessibility</a></div>
+        <div><h4 class="mono">Legal</h4><a href="#">Privacy Policy</a><a href="#">Cookie Policy</a><a href="#">Terms of Use</a><a href="#">Intellectual Property</a></div>
+      </nav>
+    </div>
+    <div class="ftr__wordmark" aria-hidden="true">AIM LABS</div>
+    <div class="ftr__bot mono">
+      <span>© 2026 AIM Labs · An AIM World business</span>
+      <span>Entity details to be confirmed before launch</span>
+      <a href="#">← AIM World</a>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js?v=5"></script>
+<script src="motion.js?v=5"></script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Research & Innovation — AIM Labs</title>
+<meta name="description" content="Research grounded in the game: eight areas, each starting with a football question and labelled with the status of the work.">
+<link rel="icon" href="assets/aim-mark.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="motion.css?v=5">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="aim-mark" viewBox="0 0 36 36"><path d="M9.46282 6.94062H15.0889V13.4681L9.46282 19.6404V6.94062ZM26.08 1.41602L20.712 7.30475V1.41602H3.84277V29.051L9.46282 34.5816V27.8332L15.0889 21.661V34.5786H20.709V15.4976L26.329 9.33134V34.5846L31.9551 29.054V1.41602H26.077H26.08Z" fill="currentColor"/></symbol>
+</svg>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<nav class="dock" id="dock" aria-label="Site">
+  <div class="dock__bar">
+    <a class="dock__home" href="index.html" aria-label="AIM Labs home"><svg class="logo__mark" aria-hidden="true"><use href="#aim-mark"/></svg><span class="dock__word">AIM <b>Labs</b></span></a>
+    <button class="dock__now" id="dock-now" aria-expanded="false" aria-controls="dock-list"><span class="mono">01</span>Research<i aria-hidden="true"></i></button>
+    <ol class="dock__list" id="dock-list"><li class="is-cur"><a href="research.html" aria-current="page"><span class="mono">01</span>Research</a></li><li><a href="technology.html"><span class="mono">02</span>Technology</a></li><li><a href="validation.html"><span class="mono">03</span>Validation</a></li><li><a href="partnerships.html"><span class="mono">04</span>Partnerships</a></li><li><a href="insights.html"><span class="mono">05</span>Insights</a></li><li><a href="about.html"><span class="mono">06</span>About</a></li></ol>
+    <a class="dock__cta" href="partner.html">Partner</a>
+  </div>
+  <i class="dock__lane" aria-hidden="true"><i id="lane"></i></i>
+</nav>
+
+<main id="main" class="page page--research">
+
+<!-- ========== 04 RESEARCH — eight lanes; the status scale is the track's distance markings ========== -->
+<section class="lanes-sec paper" id="research" aria-labelledby="research-h">
+  <div class="wrap lanes-sec__head">
+    <div>
+      <p class="idx mono">01 / Research &amp; Innovation</p>
+      <h1 id="research-h" class="kin board__h"><span class="mv-rows"><span class="mv-row" style="--i:0">Research grounded</span> <span class="mv-row" style="--i:1">in the game.</span></span></h1>
+    </div>
+    <p class="body">Every area starts with a football question. Technology is the method, not the headline — and work in progress is labelled as exactly that.</p>
+  </div>
+
+  <div class="wrap lanes" id="lanes">
+    <div class="lanes__axis">
+      <p class="mono">How we label the work</p>
+      <ol class="lanes__scale" aria-label="Capability status scale"><li><span class="tag tag--research">Research</span><small>A question being explored</small></li><li><span class="tag tag--prototype">Prototype</span><small>Built to learn, not to ship</small></li><li><span class="tag tag--pilot">Pilot</span><small>Tested in a real environment</small></li><li><span class="tag tag--validation">In validation</span><small>Benchmarked and challenged</small></li><li><span class="tag tag--beta">Beta</span><small>Limited, monitored use</small></li><li><span class="tag tag--live">Live</span><small>In production across AIM World</small></li></ol>
+    </div>
+    <ol class="lanes__list">
+      <li class="lane" data-s="4" style="--r:0;--st:4">
+        <span class="lane__n" aria-hidden="true"><b>1</b><svg class="lane__g" viewBox="0 0 44 44"><path d="M5 15V5h10M29 5h10v10M39 29v10H29M15 39H5V29"/><circle cx="22" cy="17" r="4"/><path d="M22 21v11M15 26l7-4 7 4"/></svg></span>
+        <div class="lane__t"><h3>Computer vision</h3><p>Can standard video become reliable, structured information about movement and ball interaction?</p></div>
+        <div class="lane__track"><div class="lane__in"><i class="lane__bar" aria-hidden="true"></i><i class="lane__rest" aria-hidden="true"><span class="mono">Next · Beta</span></i><div class="lane__mark"><span class="tag tag--validation">In validation</span><span class="lane__m mono">Video → events</span></div></div></div>
+      </li>
+      <li class="lane" data-s="1" style="--r:1;--st:1">
+        <span class="lane__n" aria-hidden="true"><b>2</b><svg class="lane__g" viewBox="0 0 44 44"><circle cx="17" cy="8" r="3.5"/><path d="M17 12l2 12 9 6-4 10"/><path d="M24 26a7 7 0 0 1 8 6" stroke-dasharray="2 3"/><path d="M19 17l-8 5"/></svg></span>
+        <div class="lane__t"><h3>Biomechanics &amp; movement</h3><p>Which measures of turning, balance and coordination genuinely inform development?</p></div>
+        <div class="lane__track"><div class="lane__in"><i class="lane__bar" aria-hidden="true"></i><i class="lane__rest" aria-hidden="true"><span class="mono">Next · Prototype</span></i><div class="lane__mark"><span class="tag tag--research">Research</span><span class="lane__m mono">Movement quality</span></div></div></div>
+      </li>
+      <li class="lane" data-s="2" style="--r:2;--st:2">
+        <span class="lane__n" aria-hidden="true"><b>3</b><svg class="lane__g" viewBox="0 0 44 44"><circle cx="8" cy="10" r="3"/><circle cx="8" cy="22" r="3"/><circle cx="8" cy="34" r="3"/><circle cx="22" cy="16" r="3"/><circle cx="22" cy="28" r="3"/><circle cx="36" cy="22" r="3.5"/><path d="M11 10l8 6M11 22l8-6M11 22l8 6M11 34l8-6M25 16l8 6M25 28l8-6"/></svg></span>
+        <div class="lane__t"><h3>AI &amp; machine learning</h3><p>Where can models support pattern recognition and decision support without overstating certainty?</p></div>
+        <div class="lane__track"><div class="lane__in"><i class="lane__bar" aria-hidden="true"></i><i class="lane__rest" aria-hidden="true"><span class="mono">Next · Pilot</span></i><div class="lane__mark"><span class="tag tag--prototype">Prototype</span><span class="lane__m mono">Decision support</span></div></div></div>
+      </li>
+      <li class="lane" data-s="3" style="--r:3;--st:3">
+        <span class="lane__n" aria-hidden="true"><b>4</b><svg class="lane__g" viewBox="0 0 44 44"><rect x="4" y="8" width="36" height="28"/><path d="M22 8v28"/><path d="M10 30c6-10 12-14 22-16" stroke-dasharray="3 3"/><path d="M27 10l5 4-4 5"/></svg></span>
+        <div class="lane__t"><h3>Football intelligence</h3><p>How does a technical output become meaningful to a coach on a Tuesday session?</p></div>
+        <div class="lane__track"><div class="lane__in"><i class="lane__bar" aria-hidden="true"></i><i class="lane__rest" aria-hidden="true"><span class="mono">Next · In validation</span></i><div class="lane__mark"><span class="tag tag--pilot">Pilot</span><span class="lane__m mono">Context layer</span></div></div></div>
+      </li>
+      <li class="lane" data-s="1" style="--r:4;--st:1">
+        <span class="lane__n" aria-hidden="true"><b>5</b><svg class="lane__g" viewBox="0 0 44 44"><path d="M35 24a13 13 0 1 1-4-12"/><path d="M33 5v8h-8"/><circle cx="22" cy="22" r="3"/></svg></span>
+        <div class="lane__t"><h3>Behavioural science &amp; learning</h3><p>What kind of feedback actually changes how young players train and learn?</p></div>
+        <div class="lane__track"><div class="lane__in"><i class="lane__bar" aria-hidden="true"></i><i class="lane__rest" aria-hidden="true"><span class="mono">Next · Prototype</span></i><div class="lane__mark"><span class="tag tag--research">Research</span><span class="lane__m mono">Feedback design</span></div></div></div>
+      </li>
+      <li class="lane" data-s="4" style="--r:5;--st:4">
+        <span class="lane__n" aria-hidden="true"><b>6</b><svg class="lane__g" viewBox="0 0 44 44"><path d="M6 5v33h33"/><circle cx="14" cy="29" r="2.5"/><circle cx="20" cy="22" r="2.5"/><circle cx="27" cy="25" r="2.5"/><circle cx="33" cy="13" r="2.5"/><path d="M10 33L36 10" stroke-dasharray="2 3"/></svg></span>
+        <div class="lane__t"><h3>Data &amp; decision science</h3><p>How do we compare players fairly while keeping uncertainty and context visible?</p></div>
+        <div class="lane__track"><div class="lane__in"><i class="lane__bar" aria-hidden="true"></i><i class="lane__rest" aria-hidden="true"><span class="mono">Next · Beta</span></i><div class="lane__mark"><span class="tag tag--validation">In validation</span><span class="lane__m mono">Benchmarking</span></div></div></div>
+      </li>
+      <li class="lane" data-s="5" style="--r:6;--st:5">
+        <span class="lane__n" aria-hidden="true"><b>7</b><svg class="lane__g" viewBox="0 0 44 44"><rect x="5" y="10" width="14" height="24"/><rect x="25" y="10" width="14" height="24"/><path d="M28 22l3 4 6-8"/><path d="M8 22h8"/></svg></span>
+        <div class="lane__t"><h3>Product experimentation</h3><p>Which new workflows earn a place in real products — and which should stop here?</p></div>
+        <div class="lane__track"><div class="lane__in"><i class="lane__bar" aria-hidden="true"></i><i class="lane__rest" aria-hidden="true"><span class="mono">Next · Live</span></i><div class="lane__mark"><span class="tag tag--beta">Beta</span><span class="lane__m mono">Workflows</span></div></div></div>
+      </li>
+      <li class="lane lane--along" data-s="6" style="--r:7">
+        <span class="lane__n" aria-hidden="true"><b>8</b><svg class="lane__g" viewBox="0 0 44 44"><circle cx="16" cy="22" r="10"/><circle cx="28" cy="22" r="10"/><path d="M22 14v16" stroke-dasharray="2 3"/></svg></span>
+        <div class="lane__t"><h3>Research collaboration</h3><p>Where do universities, clubs and specialists strengthen the evidence?</p></div>
+        <div class="lane__track"><div class="lane__in"><i class="lane__bar" aria-hidden="true"></i><div class="lane__mark"><span class="lane__m mono">Partners</span><a class="link" href="partner.html">Collaborate on research →</a></div></div></div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ========== NEXT LEG — hand the baton to the next page ========== -->
+<section class="nextleg" aria-label="Next page">
+  <a class="wrap nextleg__go" href="technology.html">
+    <span class="mono">Next leg · 02</span>
+    <b>Technology &amp; Intelligence <i aria-hidden="true">→</i></b>
+    <span class="nextleg__line">One clip, six hands. The last one is human.</span>
+  </a>
+</section>
+
+</main>
+
+<footer class="ftr dark ftr--cut">
+  <div class="wrap">
+    <div class="ftr__top">
+      <div class="ftr__brand">
+        <a class="logo" href="index.html"><svg class="logo__mark"><use href="#aim-mark"/></svg><span class="logo__word">AIM</span><span class="logo__labs">LABS</span></a>
+        <p>Innovation built for football.<br>Intelligence built to scale.</p>
+      </div>
+      <nav class="ftr__cols" aria-label="Footer">
+        <div><h4 class="mono">Explore</h4><a href="research.html">Research &amp; Innovation</a><a href="technology.html">Technology</a><a href="validation.html">Validation</a><a href="partnerships.html">Partnerships</a><a href="insights.html">Insights</a><a href="about.html">About</a></div>
+        <div><h4 class="mono">Partner</h4><a href="partner.html">Research Partnerships</a><a href="partner.html">Technology Collaboration</a><a href="partner.html">Football Organisations</a><a href="partner.html">Universities</a><a href="partner.html">Careers</a><a href="partner.html">Contact</a></div>
+        <div><h4 class="mono">Trust</h4><a href="#">Responsible AI</a><a href="#">Data &amp; Privacy</a><a href="#">Safeguarding</a><a href="#">Research Standards</a><a href="#">Accessibility</a></div>
+        <div><h4 class="mono">Legal</h4><a href="#">Privacy Policy</a><a href="#">Cookie Policy</a><a href="#">Terms of Use</a><a href="#">Intellectual Property</a></div>
+      </nav>
+    </div>
+    <div class="ftr__wordmark" aria-hidden="true">AIM LABS</div>
+    <div class="ftr__bot mono">
+      <span>© 2026 AIM Labs · An AIM World business</span>
+      <span>Entity details to be confirmed before launch</span>
+      <a href="#">← AIM World</a>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js?v=5"></script>
+<script src="motion.js?v=5"></script>
+</body>
+</html>

@@ -2,70 +2,160 @@
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
-  const hdr = document.getElementById('hdr'), lane = document.getElementById('lane');
+  const lane = document.getElementById('lane'), dock = document.getElementById('dock');
   const run = document.getElementById('hero'), pin = document.getElementById('run-pin');
   const film = document.getElementById('run-film'), video = document.getElementById('run-video');
-  const flood = document.getElementById('run-flood'), next = run.nextElementSibling;
-  const board = document.getElementById('glance'), chase = document.getElementById('chase');
+  const flood = document.getElementById('run-flood'), next = run && run.nextElementSibling;
+  const chase = document.getElementById('chase');
+  let paint = () => {}, sweep = 0;
 
-  /* ---------- Film: poster first, video after; only plays on screen ---------- */
-  if (!reduce) {
-    const portrait = matchMedia('(max-aspect-ratio: 1/1)').matches;
-    const slow = navigator.connection && (navigator.connection.saveData || /(^|-)2g$/.test(navigator.connection.effectiveType || ''));
-    if (!slow) {
-      video.src = `assets/video/${portrait ? 'run-m' : 'run'}.mp4`;
-      video.addEventListener('playing', () => film.classList.add('is-live'), { once: true });
-      const play = () => video.play().catch(() => {});
-      new IntersectionObserver(([e]) => e.isIntersecting ? play() : video.pause(), { threshold: .02 }).observe(run);
-      document.addEventListener('visibilitychange', () => document.hidden ? video.pause() : play());
+  /* ---------- 01 Hero (home only) ---------- */
+  if (run) {
+
+    /* ---------- Film: poster first, video after; only plays on screen ---------- */
+    if (!reduce) {
+      const portrait = matchMedia('(max-aspect-ratio: 1/1)').matches;
+      const slow = navigator.connection && (navigator.connection.saveData || /(^|-)2g$/.test(navigator.connection.effectiveType || ''));
+      if (!slow) {
+        video.src = `assets/video/${portrait ? 'run-m' : 'run'}.mp4`;
+        video.addEventListener('playing', () => film.classList.add('is-live'), { once: true });
+        const play = () => video.play().catch(() => {});
+        new IntersectionObserver(([e]) => e.isIntersecting ? play() : video.pause(), { threshold: .02 }).observe(run);
+        document.addEventListener('visibilitychange', () => document.hidden ? video.pause() : play());
+      }
     }
-  }
 
-  /* ---------- Dark-on-green copy of the headline, revealed where the gap passes ---------- */
-  if (!reduce) {
-    const copy = document.getElementById('run-copy').cloneNode(true);
-    copy.removeAttribute('id'); copy.classList.add('is-copy'); copy.inert = true;
-    copy.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
-    copy.querySelector('h1').outerHTML = copy.querySelector('h1').outerHTML.replace(/^<h1/, '<div').replace(/<\/h1>$/, '</div>');
-    copy.querySelectorAll('.sr-only').forEach(n => n.remove());
-    flood.appendChild(copy);
-  }
+    /* ---------- Dark-on-green copy of the headline, revealed where the gap passes ---------- */
+    if (!reduce) {
+      const copy = document.getElementById('run-copy').cloneNode(true);
+      copy.removeAttribute('id'); copy.classList.add('is-copy'); copy.inert = true;
+      copy.querySelectorAll('[id]').forEach(n => n.removeAttribute('id'));
+      copy.querySelector('h1').outerHTML = copy.querySelector('h1').outerHTML.replace(/^<h1/, '<div').replace(/<\/h1>$/, '</div>');
+      copy.querySelectorAll('.sr-only').forEach(n => n.remove());
+      flood.appendChild(copy);
+    }
 
-  /* ---------- The line ---------- */
-  const css = getComputedStyle(pin);
-  const PL = parseFloat(css.getPropertyValue('--pl')), PR = parseFloat(css.getPropertyValue('--pr'));
-  const MA = parseFloat(css.getPropertyValue('--ma')), MB = parseFloat(css.getPropertyValue('--mb'));
-  const set = (k, v) => pin.style.setProperty(k, v);
-  let intro = reduce ? 1 : 0, sweep = 0, topL = 100, topR = 0;
+    /* ---------- The line ---------- */
+    const css = getComputedStyle(pin);
+    const PL = parseFloat(css.getPropertyValue('--pl')), PR = parseFloat(css.getPropertyValue('--pr'));
+    const MA = parseFloat(css.getPropertyValue('--ma')), MB = parseFloat(css.getPropertyValue('--mb'));
+    const set = (k, v) => pin.style.setProperty(k, v);
+    let intro = reduce ? 1 : 0;
 
-  const paint = () => {
-    const kvw = .1063 * pin.offsetHeight / innerWidth * 100;      // the lean, in vw
-    const right = PR + (100 + kvw + 2 - PR) * clamp(sweep / .62, 0, 1);
-    const left = PL + (-kvw - 2 - PL) * clamp((sweep - .12) / .78, 0, 1);
-    const start = PL + .4;                                         // today's line starts on yesterday's
-    set('--pr', (start + (right - start) * intro).toFixed(2));
-    set('--pl', left.toFixed(2));
-    if (MA < 100) { const m = sweep * 240; set('--ma', (MA + m).toFixed(1) + '%'); set('--mb', (MB + m).toFixed(1) + '%'); }
-    topL = left + kvw; topR = right + kvw;                         // where the gap meets the header
-    pin.classList.toggle('is-moving', sweep > .02);
-    film.style.transform = `scale(${(1 + sweep * .07).toFixed(4)})`;
-  };
-
-  if (!reduce) {
-    // today's line jumps forward once, a beat after the headline lands
-    const t0 = performance.now() + 480, D = 620;
-    const ease = t => { const c = 1.9; t -= 1; return 1 + (c + 1) * t * t * t + c * t * t; };   // slight overshoot: it is pushed, not placed
-    paint();
-    const tick = now => {
-      const t = clamp((now - t0) / D, 0, 1);
-      intro = ease(t); paint();
-      if (t < 1) requestAnimationFrame(tick);
+    paint = () => {
+      const kvw = .1063 * pin.offsetHeight / innerWidth * 100;      // the lean, in vw
+      const right = PR + (100 + kvw + 2 - PR) * clamp(sweep / .62, 0, 1);
+      const left = PL + (-kvw - 2 - PL) * clamp((sweep - .12) / .78, 0, 1);
+      const start = PL + .4;                                         // today's line starts on yesterday's
+      set('--pr', (start + (right - start) * intro).toFixed(2));
+      set('--pl', left.toFixed(2));
+      if (MA < 100) { const m = sweep * 240; set('--ma', (MA + m).toFixed(1) + '%'); set('--mb', (MB + m).toFixed(1) + '%'); }
+      pin.classList.toggle('is-moving', sweep > .02);
+      film.style.transform = `scale(${(1 + sweep * .07).toFixed(4)})`;
     };
-    requestAnimationFrame(tick);
-  } else paint();
+
+    if (!reduce) {
+      // today's line jumps forward once, a beat after the headline lands
+      const t0 = performance.now() + 480, D = 620;
+      const ease = t => { const c = 1.9; t -= 1; return 1 + (c + 1) * t * t * t + c * t * t; };   // slight overshoot: it is pushed, not placed
+      paint();
+      const tick = now => {
+        const t = clamp((now - t0) / D, 0, 1);
+        intro = ease(t); paint();
+        if (t < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    } else paint();
+  }
+
+  /* ---------- 02: once the five facts are read, the annotated clip slides up over them ---------- */
+  const grun = document.getElementById('grun');
+  let grunTick = () => {};
+  if (grun) {
+    const media = grun.querySelector('.xclip__media'), v = document.getElementById('xclip-video'), cv = document.getElementById('xclip-cv'), ctx = cv.getContext('2d');
+    const GREEN = '#64FF35', BLUE = '#8FB3FF', RED = '#FF4255', INK = '#080B09', WHITE = '#F0F2E9';
+    const BONES = [[5, 7], [7, 9], [6, 8], [8, 10], [5, 6], [5, 11], [6, 12], [11, 12], [11, 13], [13, 15], [12, 14], [14, 16]];
+    const ss = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+    const MAIN = 1;   // the player in red, tracked for the whole clip
+    let D = null, W = 0, H = 0, k = 0, calls = [0, 0, 0], on = false, raf3 = 0, lastF = -1;
+    const trail = [];
+    const size = () => {
+      const dpr = Math.min(devicePixelRatio || 1, 1.5);
+      W = media.clientWidth; H = media.clientHeight;
+      cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    const chip = (x0, y0, dx, dy, txt, col, a) => {
+      if (a <= .01) return;
+      ctx.globalAlpha = a;
+      ctx.font = '500 12px "JetBrains Mono", monospace';
+      const w = ctx.measureText(txt).width + 18, h = 26;
+      let x = clamp(dx < 0 ? x0 + dx - w : x0 + dx, 10, W - w - 10), y = clamp(y0 + dy, 10, H - h - 10);   // dx < 0: the chip sits to the left
+      ctx.strokeStyle = col; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x + (dx < 0 ? w : 0), y + h / 2); ctx.stroke();
+      ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x0, y0, 4, 0, 7); ctx.fill();
+      ctx.fillStyle = INK; ctx.fillRect(x, y, w, h); ctx.strokeRect(x, y, w, h);
+      ctx.fillStyle = col; ctx.fillText(txt, x + 9, y + 17);
+      ctx.globalAlpha = 1;
+    };
+    const draw = () => {
+      if (!D || !W) return;
+      ctx.clearRect(0, 0, W, H);
+      const fi = clamp(Math.floor((v.currentTime || 0) * D.fps + .001), 0, D.n - 1), f = D.frames[fi];
+      if (fi < lastF) trail.length = 0;
+      // same fit as the video: cover the panel, or on phones cover the band at 17–69% of its height
+      const by = W < 600 ? H * .17 : 0, bh = W < 600 ? H * .52 : H;
+      const s = Math.max(W / D.w, bh / D.h) * 1.06, ox = (W - D.w * s) / 2, oy = by + (bh - D.h * s) / 2;
+      ctx.save(); ctx.beginPath(); ctx.rect(0, by, W, bh); ctx.clip();
+      const X = x => ox + x * D.w * s, Y = y => oy + y * D.h * s;
+      ctx.lineCap = 'round'; ctx.font = '500 11px "JetBrains Mono", monospace';
+      let main = null;
+      for (const p of f.p) {
+        const [id, cx, cy, bw, bh, c, kp] = p;
+        const x0 = X(cx - bw / 2), y0 = Y(cy - bh / 2), x1 = X(cx + bw / 2), y1 = Y(cy + bh / 2);
+        ctx.strokeStyle = c < .5 ? RED : BLUE; ctx.lineWidth = id === MAIN ? 2 : 1.4; ctx.strokeRect(x0, y0, x1 - x0, y1 - y0);
+        if (kp && kp.length) { ctx.strokeStyle = GREEN; ctx.lineWidth = id === MAIN ? 3 : 2.2;
+          for (const [a, b] of BONES) { if (kp[a * 3 + 2] < .35 || kp[b * 3 + 2] < .35) continue; ctx.beginPath(); ctx.moveTo(X(kp[a * 3]), Y(kp[a * 3 + 1])); ctx.lineTo(X(kp[b * 3]), Y(kp[b * 3 + 1])); ctx.stroke(); } }
+        if (id === MAIN) main = { x0, y0, x1, y1, c, kp, foot: [(x0 + x1) / 2, y1] };
+      }
+      if (main && fi !== lastF) { trail.push(main.foot); if (trail.length > 60) trail.shift(); }
+      if (trail.length > 1) { ctx.strokeStyle = BLUE; ctx.lineWidth = 2.2; ctx.setLineDash([3, 6]); ctx.beginPath(); trail.forEach((q, i) => i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])); ctx.stroke(); ctx.setLineDash([]); }
+      if (f.b) { const bx = X(f.b[0]), by = Y(f.b[1]), r = Math.max(8, f.b[2] * D.w * s / 2 + 4); ctx.strokeStyle = WHITE; ctx.lineWidth = 1.5; ctx.strokeRect(bx - r, by - r, r * 2, r * 2); }
+      ctx.restore();
+      if (main) {
+        const sh = main.kp && main.kp[5 * 3 + 2] > .35 ? [X(main.kp[15]), Y(main.kp[16])] : [main.x0, (main.y0 + main.y1) / 3];
+        const narrowC = W < 600;
+        chip(main.x0, main.y0 + 18, -22, -6, `DETECTED · conf ${main.c.toFixed(2)}`, BLUE, calls[0]);
+        chip(sh[0], sh[1], -40, narrowC ? 30 : 40, 'POSE · 17 JOINTS', GREEN, calls[1]);
+        chip(main.foot[0], main.foot[1], narrowC ? -16 : 28, narrowC ? -150 : -64, `TRACKED · ID 01 · f ${String(fi).padStart(3, '0')}`, BLUE, calls[2]);
+      }
+      lastF = fi;
+    };
+    const loop = () => { draw(); raf3 = on ? requestAnimationFrame(loop) : 0; };
+    new ResizeObserver(() => { size(); draw(); }).observe(media);
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !D) {
+        fetch('assets/video/clip-01-duel.json').then(r => r.json()).then(d => { D = d; size(); draw(); }).catch(() => {});
+        v.src = 'assets/video/clip-01-duel.mp4';
+      }
+    }, { rootMargin: '600px 0px' }).observe(grun);
+    grunTick = () => {
+      const r = grun.getBoundingClientRect();
+      const p = reduce ? 1 : clamp(-r.top / Math.max(1, r.height - innerHeight), 0, 1);
+      k = reduce ? 1 : ss(.26, .6, p);
+      calls = [ss(.64, .72, p), ss(.72, .8, p), ss(.8, .88, p)];
+      grun.style.setProperty('--k', k.toFixed(4));
+      grun.style.setProperty('--cap', (reduce ? 1 : ss(.6, .7, p)).toFixed(3));
+      const visible = r.top < innerHeight && r.bottom > 0 && k > .01;
+      if (visible && !on) { on = true; if (!reduce) v.play().catch(() => {}); if (!raf3) raf3 = requestAnimationFrame(loop); }
+      if (!visible && on) { on = false; v.pause(); }
+      if (reduce) draw();
+    };
+    if (reduce) { calls = [1, 1, 1]; v.addEventListener('loadeddata', draw); }
+    grunTick();
+  }
 
   /* ---------- Section headings: in once on the diagonal; only those on screen react to speed ---------- */
-  const seen = new Set([pin]);
+  const seen = new Set(pin ? [pin] : []);
   const speedTargets = () => seen;
   document.querySelectorAll('.kin').forEach(k => {
     if (reduce) return;
@@ -107,40 +197,73 @@
       const d = v.duration || 3.14;
       return clamp(Math.floor((v.currentTime % d) / d * G.n), 0, G.n - 1);
     };
+    const cpin = document.getElementById('chase-pin'), numEl = document.getElementById('chase-num'), wipe = document.getElementById('chase-wipe');
+    const snaps = [...chase.querySelectorAll('.chase__snap')];
+    const span = () => Math.max(1, chase.offsetHeight - innerHeight - innerWidth * .1051);   // done before 04 arrives
+    const placeSnaps = () => snaps.forEach((s, n) => { s.style.top = Math.round([.17, .5, .84][n] * span()) + 'px'; });
+    let stage = -1;
+    const outline = (poly, sx, sy, X, Y) => { ctx.beginPath(); for (let k = 0; k < poly.length; k += 2) { const x = X(poly[k] + sx), y = Y(poly[k + 1] + sy); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.closePath(); };
     const draw = () => {
       if (!G || !W) return;
       const r = chase.getBoundingClientRect();
-      const p = reduce ? .3 : clamp(-r.top / Math.max(1, r.height - innerHeight - innerWidth * .1051), 0, 1);   // done before 04 arrives
+      const p = reduce ? .9 : clamp(-r.top / span(), 0, 1);
+      const a = p < .34 ? 0 : p < .67 ? 1 : 2, ts = clamp((p - [0, .34, .67][a]) / .33, 0, 1);
+      if (a !== stage) {
+        cpin.dataset.st = a; numEl.textContent = '0' + (a + 1);
+        if (stage !== -1 && !reduce) { [wipe, numEl].forEach(n => { n.classList.remove('go'); void n.offsetWidth; n.classList.add('go'); }); }
+        stage = a;
+      }
+      steps.forEach((li, n) => { li.classList.toggle('is-on', n === a); li.classList.toggle('is-done', n < a); });
+      steps[a].style.setProperty('--ts', ts.toFixed(3));
+
       const narrowFilm = portrait(), i = frameAt(), { s, ox, oy } = place(i);
-      const far = narrowFilm ? -.012 : -.02, near = narrowFilm ? -.1 : -.2;
-      const dx = far + (near - far) * ss(.06, .9, p);        // starts level with the player, then falls behind: the line moves
-      const g = G.good[(Math.floor(i / G.n * G.good.length) + LAG) % G.good.length];
       const X = x => ox + x * VW * s, Y = y => oy + y * VH * s;
       film.style.transform = narrowFilm ? `translate(${ox.toFixed(1)}px, -9%)` : '';
-
       ctx.clearRect(0, 0, W, H);
-      const px = G.c[i][0], foot = G.b[i], head = G.t[i];
-      const shiftX = px - G.c[g][0] + dx, shiftY = foot - G.b[g], poly = G.p[g];
-      ctx.beginPath();
-      for (let k = 0; k < poly.length; k += 2) { const x = X(poly[k] + shiftX), y = Y(poly[k + 1] + shiftY); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
-      ctx.closePath();
-      ctx.fillStyle = 'rgba(143,179,255,.42)'; ctx.fill();
-      ctx.strokeStyle = GHOST; ctx.lineWidth = 1.5; ctx.stroke();
-
-      // the gap, on the ground between them
+      const px = G.c[i][0], foot = G.b[i], head = G.t[i], ty = Y(head) - 14;
       const stepsTop = steps[0].parentNode.getBoundingClientRect().top - pin2.getBoundingClientRect().top;
-      const yb = Math.min(Y(foot) + 12, stepsTop - 14), xa = X(px), xb = X(px + dx);
-      ctx.fillStyle = GREEN;
-      ctx.fillRect(Math.min(xa, xb), yb, Math.abs(xb - xa), 4);
-      const wide = Math.abs(xb - xa) > 130;
-      if (wide) tag('The line moved', (xa + xb) / 2, yb - 6, GREEN, INK);
-      const ty = Y(head) - 14;
-      tag('Today', xa, ty, GREEN, INK);
-      if (Math.abs(xb - xa) > 84) tag('Your last run', xb, ty, GHOST, INK);
 
-      const a = p < .34 ? 0 : p < .67 ? 1 : 2;
-      steps.forEach((li, n) => li.classList.toggle('is-on', n === a));
+      if (a === 0) {
+        // Explore: what can one camera see? The outline arrives as points; a scan passes over the pitch.
+        const poly = G.p[i], sweep = ((performance.now() / 1700) % 1) * (W + 200) - 100, lean = H * .1063;
+        for (let k = 0; k < poly.length; k += 2) {
+          const x = X(poly[k]), y = Y(poly[k + 1]), lit = Math.abs(x - (sweep + lean * (1 - 2 * y / H))) < 60;
+          ctx.fillStyle = lit ? GREEN : 'rgba(240,242,233,.9)'; ctx.fillRect(x - 2, y - 2, lit ? 5 : 3.5, lit ? 5 : 3.5);
+        }
+        ctx.strokeStyle = 'rgba(100,255,53,.75)'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(sweep + lean, 0); ctx.lineTo(sweep - lean, H); ctx.stroke();
+        tag(`One camera · ${poly.length / 2} outline points`, X(px), ty, GREEN, INK);
+      } else if (a === 1) {
+        // Test: is it credible? Every frame's outline is checked; incomplete ones are dropped, not patched.
+        const ok = G.good.includes(i);
+        outline(G.p[i], 0, 0, X, Y);
+        ctx.strokeStyle = ok ? '#F0F2E9' : '#FF4255'; ctx.lineWidth = 2.2; ctx.stroke();
+        tag(ok ? `Frame ${String(i + 1).padStart(3, '0')} · complete ✓` : `Frame ${String(i + 1).padStart(3, '0')} · incomplete · dropped`, X(px), ty, ok ? '#F0F2E9' : '#FF4255', INK);
+        const L = narrowFilm ? 16 : 48, R = W - L, cw = (R - L) / G.n, y = stepsTop - 30;
+        for (let n = 0; n < G.n; n++) {
+          ctx.fillStyle = G.good.includes(n) ? GREEN : '#FF4255';
+          ctx.globalAlpha = n <= Math.floor(ts * 1.25 * G.n) ? 1 : .18;
+          ctx.fillRect(L + n * cw, y, Math.max(1, cw - 1.5), 12);
+        }
+        ctx.globalAlpha = 1; ctx.fillStyle = '#F0F2E9'; ctx.fillRect(L + i * cw - 1, y - 5, 2, 22);
+        ctx.font = '500 11px "JetBrains Mono", monospace'; ctx.fillStyle = '#E2E6DC';
+        ctx.fillText(`Outline check · ${G.good.length} of ${G.n} frames complete · ${G.n - G.good.length} dropped`, L, y - 10);
+      } else {
+        // Translate: what works becomes something a coach can use. The ghost is the same player; the line moves.
+        const far = narrowFilm ? -.012 : -.02, near = narrowFilm ? -.1 : -.2;
+        const dx = far + (near - far) * ss(.05, .85, ts);
+        const g = G.good[(Math.floor(i / G.n * G.good.length) + LAG) % G.good.length];
+        outline(G.p[g], px - G.c[g][0] + dx, foot - G.b[g], X, Y);
+        ctx.fillStyle = 'rgba(143,179,255,.42)'; ctx.fill();
+        ctx.strokeStyle = GHOST; ctx.lineWidth = 1.5; ctx.stroke();
+        const yb = Math.min(Y(foot) + 12, stepsTop - 14), xa = X(px), xb = X(px + dx);
+        ctx.fillStyle = GREEN; ctx.fillRect(Math.min(xa, xb), yb, Math.abs(xb - xa), 4);
+        if (Math.abs(xb - xa) > 130) tag('The line moved', (xa + xb) / 2, yb - 6, GREEN, INK);
+        tag('Today', xa, ty, GREEN, INK);
+        if (Math.abs(xb - xa) > 84) tag('Your last run', xb, ty, GHOST, INK);
+      }
     };
+    addEventListener('resize', placeSnaps); placeSnaps();
     const loop = () => { draw(); raf2 = on ? requestAnimationFrame(loop) : 0; };
 
     fetch('assets/video/why-run.json').then(r => r.json()).then(d => {
@@ -184,11 +307,12 @@
   const relay = document.getElementById('technology');
   if (relay) {
     const film = document.getElementById('relay-film'), v = document.getElementById('relay-video'), cv = document.getElementById('relay-cv');
-    const word = document.getElementById('relay-word'), read = document.getElementById('relay-read'), ctl = document.getElementById('relay-ctl');
+    const word = document.getElementById('relay-word'), numEl = document.getElementById('relay-num'), unitEl = document.getElementById('relay-unit'), ctl = document.getElementById('relay-ctl');
     const baton = document.getElementById('relay-baton'), rail = document.getElementById('relay-legs');
     const legs = [...relay.querySelectorAll('.leg')], ctx = cv.getContext('2d');
     const NAMES = legs.map(b => b.querySelector('b').textContent);
-    const GREEN = '#64FF35', BLUE = '#8FB3FF', RED = '#FF4255', INK = '#080B09', WHITE = '#F0F2E9';
+    const GREEN = '#64FF35', BLUE = '#8FB3FF', RED = '#FF4255', INK = '#080B09', WHITE = '#F0F2E9', CYAN = '#38C6E0', AMBER = '#FFC45E';
+    const LEGC = [WHITE, BLUE, GREEN, CYAN, AMBER, GREEN];   // each leg's colour = the colour of its layer on the clip
     const BONES = [[5, 7], [7, 9], [6, 8], [8, 10], [5, 6], [5, 11], [6, 12], [11, 12], [11, 13], [13, 15], [12, 14], [14, 16]];
     const HOLD = 2300;
     let D = null, W = 0, H = 0, leg = 0, visible = false, running = false, started = false, timer = 0, lastF = -1;
@@ -201,15 +325,18 @@
       cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
     const select = i => {
+      if (!Number.isInteger(i) || !legs[i]) return;
       leg = i;
       legs.forEach((b, n) => { b.classList.toggle('is-on', n === i); b.setAttribute('aria-pressed', n === i); });
       baton.style.setProperty('--at', i);
+      relay.style.setProperty('--lc', LEGC[i]);
+      legs.forEach((b, n) => b.classList.toggle('is-done', n < i));
       relay.classList.toggle('is-human', i === 5);
       word.textContent = NAMES[i]; word.classList.remove('is-swap'); void word.offsetWidth; word.classList.add('is-swap');
       if (innerWidth <= 1024) rail.scrollTo({ left: legs[i].parentNode.offsetLeft - legs[0].parentNode.offsetLeft, behavior: reduce ? 'auto' : 'smooth' });
     };
     const label = () => { ctl.textContent = running ? 'Pause' : leg === 5 ? 'Run it again' : 'Resume'; };
-    const stop = () => { running = false; clearTimeout(timer); label(); };
+    const stop = () => { running = false; relay.classList.remove('is-running'); clearTimeout(timer); label(); };
     const next = () => {
       clearTimeout(timer);
       if (!running) return;
@@ -218,7 +345,7 @@
         select(leg + 1); if (leg === 5) stop(); else next();
       }, HOLD);
     };
-    const start = () => { running = true; label(); next(); };
+    const start = () => { running = true; relay.classList.add('is-running'); label(); next(); };
     legs.forEach((b, i) => b.addEventListener('click', () => { stop(); select(i); label(); }));
     ctl.addEventListener('click', () => {
       if (running) { stop(); return; }
@@ -232,6 +359,7 @@
       swipe = setTimeout(() => {
         if (running || innerWidth > 1024) return;
         const step = legs[1].parentNode.offsetLeft - legs[0].parentNode.offsetLeft;
+        if (!step) return;
         const i = clamp(Math.round(rail.scrollLeft / step), 0, 5);
         if (i !== leg) { select(i); label(); }
       }, 140);
@@ -265,15 +393,15 @@
         }
         if (leg === 3) {
           const t = trails.get(id) || [];
-          ctx.strokeStyle = BLUE; ctx.lineWidth = 2; ctx.setLineDash([2, 5]); ctx.beginPath(); t.forEach((q, i) => (i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]))); ctx.stroke(); ctx.setLineDash([]);
-          ctx.fillStyle = BLUE; ctx.beginPath(); ctx.arc(foot[0], foot[1], 3.5, 0, 7); ctx.fill();
+          ctx.strokeStyle = CYAN; ctx.lineWidth = 2; ctx.setLineDash([2, 5]); ctx.beginPath(); t.forEach((q, i) => (i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]))); ctx.stroke(); ctx.setLineDash([]);
+          ctx.fillStyle = CYAN; ctx.beginPath(); ctx.arc(foot[0], foot[1], 3.5, 0, 7); ctx.fill();
           const n = short(id), w = ctx.measureText(n).width + 8;
-          ctx.fillStyle = 'rgba(8,11,9,.85)'; ctx.fillRect(foot[0] - w / 2, foot[1] + 6, w, 14); ctx.fillStyle = BLUE; ctx.fillText(n, foot[0] - w / 2 + 4, foot[1] + 17);
+          ctx.fillStyle = 'rgba(8,11,9,.85)'; ctx.fillRect(foot[0] - w / 2, foot[1] + 6, w, 14); ctx.fillStyle = CYAN; ctx.fillText(n, foot[0] - w / 2 + 4, foot[1] + 17);
         }
         if (leg === 4 && id === D.held[fi]) {
-          ctx.strokeStyle = GREEN; ctx.lineWidth = 2.6; ctx.strokeRect(x0 - 3, y0 - 3, x1 - x0 + 6, y1 - y0 + 6);
+          ctx.strokeStyle = AMBER; ctx.lineWidth = 2.6; ctx.strokeRect(x0 - 3, y0 - 3, x1 - x0 + 6, y1 - y0 + 6);
           const t = `${short(id)} · ON THE BALL`, w = ctx.measureText(t).width + 10;
-          ctx.fillStyle = GREEN; ctx.fillRect(x0 - 3, y0 - 20, w, 15); ctx.fillStyle = INK; ctx.fillText(t, x0 + 2, y0 - 9);
+          ctx.fillStyle = AMBER; ctx.fillRect(x0 - 3, y0 - 20, w, 15); ctx.fillStyle = INK; ctx.fillText(t, x0 + 2, y0 - 9);
         }
       }
       if (f.b && (leg === 1 || leg === 4)) {
@@ -282,7 +410,9 @@
       }
       lastF = fi;
       const done = D.events.filter(e => e[0] <= fi).length, n = Math.max(1, f.p.length);
-      read.textContent = [`Frame ${String(fi).padStart(3, '0')}`, `${f.p.length} players · confidence ${(conf / n).toFixed(2)}`, `${joints} bones this frame`, `${trails.size} IDs held`, `${done} of ${D.events.length} possession changes`, '1 suggestion'][leg];
+      const R = [[String(fi).padStart(3, '0'), 'frame of 200'], [String(f.p.length), `players · conf ${(conf / n).toFixed(2)}`], [String(joints), 'bones this frame'], [String(trails.size), 'IDs held'], [`${done}/${D.events.length}`, 'possession changes'], ['1', 'suggestion · a person decides']][leg];
+      if (numEl.textContent !== R[0]) numEl.textContent = R[0];
+      if (unitEl.textContent !== R[1]) unitEl.textContent = R[1];
     };
     const loop = () => { if (visible) { draw(); requestAnimationFrame(loop); } };
 
@@ -319,29 +449,99 @@
     }, { threshold: .55 }).observe(film);
   }
 
+  /* ---------- Dock: the site navigation sits at the bottom. Phones open a sheet; it tucks while you read down ---------- */
+  const now = document.getElementById('dock-now');
+  const setSheet = open => { dock.classList.toggle('is-open', open); now.setAttribute('aria-expanded', open); };
+  now.addEventListener('click', () => setSheet(!dock.classList.contains('is-open')));
+  addEventListener('keydown', e => { if (e.key === 'Escape' && dock.classList.contains('is-open')) { setSheet(false); now.focus(); } });
+  document.addEventListener('click', e => { if (!dock.contains(e.target)) setSheet(false); });
+  dock.addEventListener('focusin', () => dock.classList.remove('is-tucked'));
+
+  /* ---------- Insights: notes arrive one by one ---------- */
+  const log = document.querySelector('.log');
+  if (log && !reduce) {
+    log.classList.add('js-reveal');
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -12% 0px' });
+    log.querySelectorAll('.nb').forEach(n => io.observe(n));
+  }
+
+  /* ---------- People & Standards: one line in focus; a person lights the lines they keep ---------- */
+  const keep = document.getElementById('keep-lines');
+  if (keep) {
+    const lines = [...keep.children];
+    lines.forEach((li, i) => li.style.setProperty('--k', i));
+    const focus = li => lines.forEach(l => l.classList.toggle('is-on', l === li));
+    lines.forEach(li => {
+      li.addEventListener('mouseenter', () => focus(li));
+      li.addEventListener('focus', () => focus(li));
+      li.addEventListener('click', () => focus(li));
+    });
+    if (!reduce) {
+      keep.classList.add('js-reveal');
+      const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { keep.classList.add('is-in'); io.disconnect(); } }), { rootMargin: '0px 0px -15% 0px' });
+      io.observe(keep);
+    }
+    document.querySelectorAll('#team .person').forEach(p => {
+      const ks = (p.dataset.keeps || '').split(' ');
+      const mark = on => lines.forEach(l => l.classList.toggle('is-kept', on && ks.includes(l.dataset.k)));
+      p.addEventListener('mouseenter', () => mark(true));
+      p.addEventListener('mouseleave', () => mark(false));
+      p.addEventListener('focus', () => mark(true));
+      p.addEventListener('blur', () => mark(false));
+      p.addEventListener('click', () => {   // touch: a tap pins the person and their lines
+        const on = !p.classList.contains('is-on');
+        document.querySelectorAll('#team .person').forEach(o => o.classList.remove('is-on'));
+        p.classList.toggle('is-on', on); mark(on);
+      });
+    });
+  }
+
+  /* ---------- Dosed blocks (Partnerships): one block in focus; its parts arrive one at a time ---------- */
+  const doses = [...document.querySelectorAll('[data-dose]')];
+  const pinDoses = () => !reduce && matchMedia('(min-width: 861px) and (min-height: 620px)').matches;
+  const doseTick = () => {
+    if (!doses.length) return;
+    const pinned = pinDoses(), mid = innerHeight * .5;
+    doses.forEach(d => {
+      const r = d.getBoundingClientRect(), steps = d.querySelectorAll('[data-step]');
+      d.classList.toggle('is-focus', reduce || (r.top < mid + 40 && r.bottom > mid - 40));
+      if (reduce) { steps.forEach(s => s.classList.add('is-shown')); return; }
+      if (pinned) {
+        // pinned for (n × 32svh): step k shows once the scroll is k / n of the way through 80% of it
+        const n = +getComputedStyle(d).getPropertyValue('--n') || 1;
+        const p = clamp(-r.top / Math.max(1, r.height - innerHeight), 0, 1);
+        d.style.setProperty('--dp', p.toFixed(3));
+        steps.forEach(s => s.classList.toggle('is-shown', r.top < innerHeight * .4 && +s.dataset.step <= Math.floor(p / .8 * n + .001)));
+      } else {
+        d.style.setProperty('--dp', 1);
+        steps.forEach(s => { if (s.getBoundingClientRect().top < innerHeight * .78) s.classList.add('is-shown'); });
+      }
+    });
+  };
+
   /* ---------- Scroll: progress, sweep, speed ---------- */
   const narrow = () => innerWidth < 768;
   let lastY = scrollY, lastT = performance.now(), vel = 0, raf = 0;
   const frame = now => {
     const y = scrollY, dt = Math.max(8, now - lastT);
-    const v = (y - lastY) / dt;                                    // px per ms
+    const dy = y - lastY, v = dy / dt;                             // px per ms
     lastY = y; lastT = now;
     vel += (v - vel) * .2;
 
     const max = document.documentElement.scrollHeight - innerHeight;
     lane.style.transform = `scaleX(${clamp(y / (max || 1), 0, 1).toFixed(4)})`;
 
-    const span = next.offsetTop - run.offsetTop - pin.offsetHeight;   // done before the next section arrives
-    sweep = span > 0 ? clamp((y - run.offsetTop) / span, 0, 1) : 0;
-    if (!reduce) paint();
+    grunTick();
+    doseTick();
+    if (run) {
+      const span = next.offsetTop - run.offsetTop - pin.offsetHeight;   // done before the next section arrives
+      sweep = span > 0 ? clamp((y - run.offsetTop) / span, 0, 1) : 0;
+      if (!reduce) paint();
+    }
 
-    // the header sits on green from the flood to the end of the board
-    const cut = innerWidth * .1051, end = board.offsetTop + board.offsetHeight - cut - 40;
-    const chaseEnd = chase ? chase.offsetTop + chase.parentNode.offsetTop + chase.offsetHeight - cut - 60 : 0;
-    const past = y >= end, onBoard = y >= run.offsetTop + run.offsetHeight - 40 && !past;
-    hdr.classList.toggle('on-l', !past && (onBoard || (!reduce && topL < 9)));
-    hdr.classList.toggle('on-r', !past && (onBoard || (!reduce && topR > 92)));
-    hdr.classList.toggle('is-past', past && y >= chaseEnd);
+    // the dock tucks to its essentials while reading down, and comes back on any scroll up, at the top and at the end
+    if (dy > 6 && y > 160 && max - y > 120 && !dock.classList.contains('is-open') && !dock.matches(':hover, :focus-within')) dock.classList.add('is-tucked');
+    else if (dy < -6 || y <= 160 || max - y <= 120) dock.classList.remove('is-tucked');
 
     if (!reduce) {
       const g = narrow() ? .5 : 1;                                 // never past ±6° and ±8%, level at rest
@@ -351,8 +551,8 @@
     raf = Math.abs(vel) > .004 || Math.abs(v) > .001 ? requestAnimationFrame(frame) : (settle(), 0);
   };
   const settle = () => { vel = 0; speedTargets().forEach(n => ['--sk', '--sx', '--vx'].forEach(k => n.style.removeProperty(k))); };
-  const wake = () => { if (!raf) { lastT = performance.now(); lastY = scrollY; raf = requestAnimationFrame(frame); } };
+  const wake = () => { if (!raf) { lastT = performance.now(); raf = requestAnimationFrame(frame); } };   // lastY is kept: a jump still reads as a direction
   addEventListener('scroll', wake, { passive: true });
-  addEventListener('resize', () => { paint(); wake(); });
+  addEventListener('resize', () => { paint(); doseTick(); wake(); });
   frame(performance.now());
 })();

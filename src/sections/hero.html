@@ -1,0 +1,35 @@
+<!-- ========== 01 HERO — "Move the line" ========== -->
+<section class="mv" id="hero" aria-labelledby="hero-h">
+  <div class="mv__pin" id="run-pin">
+    <div class="mv__film" id="run-film" aria-hidden="true">
+      <picture>
+        <source media="(max-aspect-ratio: 1/1)" srcset="assets/video/run-m.jpg">
+        <img src="assets/video/run.jpg" alt="" width="1280" height="720" fetchpriority="high">
+      </picture>
+      <video id="run-video" muted playsinline loop preload="none"></video>
+    </div>
+    <i class="mv__shade" aria-hidden="true"></i>
+    <p class="sr-only">Film from AIM: players sprint, a goalkeeper dives, a ball skids across grass and sand.</p>
+
+    <div class="mv__copy" id="run-copy">
+      <div class="wrap mv__in">
+        <p class="eyebrow"><span class="dot"></span>AIM World · Research &amp; Innovation Division</p>
+        <h1 id="hero-h" class="mv__h">
+          <span class="sr-only">Innovation built for football. Intelligence built to scale.</span>
+          <span class="mv-rows mv-rows--d" aria-hidden="true"><span class="mv-row" style="--i:0">Innovation built</span><span class="mv-row" style="--i:1">for football.</span><span class="mv-row mv-row--g" style="--i:2">Intelligence</span><span class="mv-row mv-row--g" style="--i:3">built to scale.</span></span>
+          <span class="mv-rows mv-rows--m" aria-hidden="true"><span class="mv-row" style="--i:0">Innovation</span><span class="mv-row" style="--i:1">built for</span><span class="mv-row" style="--i:2">football.</span><span class="mv-row mv-row--g" style="--i:3">Intelligence</span><span class="mv-row mv-row--g" style="--i:4">built to</span><span class="mv-row mv-row--g" style="--i:5">scale.</span></span>
+        </h1>
+        <p class="mv__lede">AIM Labs explores emerging technology, validates new ideas and translates research into practical football intelligence for players, coaches and organisations.</p>
+        <div class="mv__ctas">
+          <a class="btn btn--green" href="#lanes-index">Explore AIM Labs</a>
+          <a class="btn btn--ghost" href="partner.html">Partner with AIM Labs</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- the gap between yesterday's line and today's; motion.js adds a dark-on-green copy of the headline inside it -->
+    <div class="mv__flood" id="run-flood" aria-hidden="true"></div>
+    <span class="mv__tag mv__tag--y mono" aria-hidden="true">Yesterday</span>
+    <span class="mv__tag mv__tag--t mono" aria-hidden="true">Today</span>
+  </div>
+</section>

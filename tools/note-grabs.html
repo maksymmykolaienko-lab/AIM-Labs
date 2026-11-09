@@ -1,0 +1,120 @@
+<!doctype html>
+<!-- Builds the six Insights illustrations from real AIM frames and model output.
+     Open via the local server (http://127.0.0.1:5180/tools/note-grabs.html); each canvas
+     is saved to assets/notes/ by tools/README's capture step. Numbers are computed here,
+     from the same JSON the site uses, not typed in. -->
+<html lang="en"><head><meta charset="utf-8"><title>Note grabs</title>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#222;display:grid;gap:12px;padding:12px}canvas{display:block}</style></head>
+<body>
+<canvas id="n1" width="1280" height="720"></canvas>
+<canvas id="n2" width="1280" height="720"></canvas>
+<canvas id="n3" width="1280" height="720"></canvas>
+<canvas id="n4" width="1280" height="720"></canvas>
+<canvas id="n5" width="1280" height="720"></canvas>
+<canvas id="n6" width="1280" height="720"></canvas>
+<script>
+const W = 1280, H = 720, V = '../assets/video/';
+const GREEN = '#64FF35', BLUE = '#8FB3FF', RED = '#FF4255', INK = '#080B09', WHITE = '#F0F2E9', AMBER = '#FFC45E';
+const BONES = [[5, 7], [7, 9], [6, 8], [8, 10], [5, 6], [5, 11], [6, 12], [11, 12], [11, 13], [13, 15], [12, 14], [14, 16]];
+const img = s => new Promise(r => { const i = new Image(); i.onload = () => r(i); i.src = V + s; });
+const json = s => fetch(V + s).then(r => r.json());
+const K = (p, j) => [p[6][j * 3] * W, p[6][j * 3 + 1] * H, p[6][j * 3 + 2]];
+const base = (c, im, dim = .9) => { const x = c.getContext('2d'); x.filter = `contrast(1.15) saturate(1.2) brightness(${dim})`; x.drawImage(im, 0, 0, W, H); x.filter = 'none'; return x; };
+const chip = (x, lines, X, Y, col, ink = INK, big = false) => {
+  x.font = `500 ${big ? 32 : 24}px "JetBrains Mono"`;
+  const lh = big ? 42 : 34, w = Math.max(...lines.map(l => x.measureText(l).width)) + 28, h = lines.length * lh + 14;
+  x.fillStyle = col; x.fillRect(X, Y, w, h);
+  x.fillStyle = ink; lines.forEach((l, i) => x.fillText(l, X + 14, Y + 8 + lh * (i + .72)));
+  return [w, h];
+};
+const skel = (x, p, col, lw) => { x.strokeStyle = col; x.lineWidth = lw; x.lineCap = 'round';
+  for (const [a, b] of BONES) { const A = K(p, a), B = K(p, b); if (A[2] < .35 || B[2] < .35) continue; x.beginPath(); x.moveTo(A[0], A[1]); x.lineTo(B[0], B[1]); x.stroke(); } };
+const angle = (A, B, C) => { const v1 = [A[0] - B[0], A[1] - B[1]], v2 = [C[0] - B[0], C[1] - B[1]]; return Math.acos((v1[0] * v2[0] + v1[1] * v2[1]) / Math.hypot(...v1) / Math.hypot(...v2)) * 180 / Math.PI; };
+const shade = (x, a = .55) => { const g = x.createLinearGradient(0, H, 0, H * .45); g.addColorStop(0, `rgba(8,11,9,${a})`); g.addColorStop(1, 'rgba(8,11,9,0)'); x.fillStyle = g; x.fillRect(0, 0, W, H); };
+
+(async () => {
+  await Promise.all([document.fonts.load('500 24px "JetBrains Mono"'), document.fonts.load('32px Anton')]);
+  const duel = await json('clip-01-duel.json'), night = await json('clip-04-match.json'), sand = await json('clip-02-sand.json'), park = await json('clip-03-park.json');
+  const [fDuel, fNight, fSand, fPark] = await Promise.all(['../notes/duel-f145-src.jpg', 'clip-04-match.jpg', 'clip-02-sand.jpg', 'clip-03-park.jpg'].map(img));
+  // the jpgs are the model's own frames (1280×720), so JSON coordinates map straight on
+  const fix = p => p;
+
+  // 1 · What a turn tells us: one knee angle, from one camera
+  { const x = base(document.getElementById('n1'), fDuel, .82);
+    const p = fix(duel.frames[145].p.find(q => q[0] === 1));
+    skel(x, p, 'rgba(100,255,53,.75)', 4);
+    const hip = K(p, 12), knee = K(p, 14), ank = K(p, 16), a = Math.round(angle(hip, knee, ank));
+    x.strokeStyle = WHITE; x.lineWidth = 7; x.beginPath(); x.moveTo(hip[0], hip[1]); x.lineTo(knee[0], knee[1]); x.lineTo(ank[0], ank[1]); x.stroke();
+    const a1 = Math.atan2(hip[1] - knee[1], hip[0] - knee[0]), a2 = Math.atan2(ank[1] - knee[1], ank[0] - knee[0]);
+    x.strokeStyle = GREEN; x.lineWidth = 5; x.beginPath(); x.arc(knee[0], knee[1], 46, Math.min(a1, a2), Math.max(a1, a2)); x.stroke();
+    [hip, knee, ank].forEach(q => { x.fillStyle = GREEN; x.beginPath(); x.arc(q[0], q[1], 9, 0, 7); x.fill(); });
+    chip(x, [`KNEE ≈ ${a}°`], knee[0] + 60, knee[1] - 40, GREEN, INK, true);
+    shade(x, .7);
+    chip(x, ['ONE CAMERA · 2D ESTIMATE', 'depth is inferred, not measured'], 120, H - 120, 'rgba(8,11,9,.85)', WHITE);
+  }
+  // 2 · Why we publish our limitations: the night clip, flagged
+  { const x = base(document.getElementById('n2'), fNight, 1.1);
+    const f = night.frames[0], low = f.p.filter(p => p[5] < .5).length;
+    for (const p of f.p) { const [, cx, cy, bw, bh, c] = p; const X0 = (cx - bw / 2) * W, Y0 = (cy - bh / 2) * H;
+      x.strokeStyle = c < .5 ? RED : BLUE; x.lineWidth = c < .5 ? 4 : 3; x.strokeRect(X0, Y0, bw * W, bh * H); }
+    shade(x, .6);
+    chip(x, ['KNOWN LIMITS', '· Low light', '· Small, distant players', '· Players hidden behind others'], W - 470, 34, INK, WHITE);
+    chip(x, [`${low} of ${f.p.length} detections below 0.5 confidence`], 120, H - 84, RED, INK);
+  }
+  // 3 · Twelve weeks of session review: moments clipped from one real clip
+  { const x = base(document.getElementById('n3'), fSand, .8);
+    const near = sand.frames.map(f => { if (!f.b) return null; let best = null; for (const p of f.p) { const d = Math.hypot(p[1] - f.b[0], (p[2] + p[4] / 2 - f.b[1]) * .5625); if (d < .6 * p[4] && (!best || d < best[0])) best = [d, p[0]]; } return best ? best[1] : null; });
+    const ev = []; let cur = null, cand = null, n = 0;
+    near.forEach((c, i) => { if (c === cand) n++; else { cand = c; n = 1; } if (cand !== null && n === 5 && cand !== cur) { ev.push(i - 4); cur = cand; } });
+    shade(x, .85);
+    const L = 150, R = W - 170, Y = H - 120;
+    x.fillStyle = 'rgba(240,242,233,.25)'; x.fillRect(L, Y, R - L, 10);
+    ev.forEach((e, i) => { const X = L + e / sand.n * (R - L); x.fillStyle = GREEN; x.fillRect(X - 34, Y - 6, 68, 22);
+      x.font = '500 22px "JetBrains Mono"'; x.fillStyle = WHITE; x.fillText(`CLIP ${i + 1}`, X - 40, i % 2 ? Y + 48 : Y - 18); });
+    x.font = '500 20px "JetBrains Mono"'; x.fillStyle = '#C9D0C4'; x.fillText('0s', L, Y + 80); x.fillText(`${(sand.n / sand.fps).toFixed(0)}s`, R - 26, Y + 80);
+    chip(x, ['SESSION REVIEW · AUTO-CLIPPED', `${ev.length} possession changes → ${ev.length} clips`, 'the coach picks what to share'], 190, 34, 'rgba(8,11,9,.86)', WHITE);
+  }
+  // 4 · Counting the ball at night: the same model, day vs floodlights
+  { const c = document.getElementById('n4'), x = c.getContext('2d');
+    const dayPct = Math.round(sand.frames.filter(f => f.b).length / sand.n * 100), nightPct = Math.round(night.frames.filter(f => f.b).length / night.n * 100);
+    x.filter = 'contrast(1.15) saturate(1.2) brightness(.92)'; x.drawImage(fSand, 0, 0, W, H); x.filter = 'none';
+    const b = sand.frames[0].b, bx = b[0] * W, by = b[1] * H, r = Math.max(16, b[2] * W * .5 + 8);
+    x.strokeStyle = GREEN; x.lineWidth = 4; x.strokeRect(bx - r, by - r, r * 2, r * 2);
+    x.save(); x.beginPath(); x.moveTo(W * .56 + 76, 0); x.lineTo(W, 0); x.lineTo(W, H); x.lineTo(W * .56 - 76, H); x.closePath(); x.clip();
+    x.filter = 'contrast(1.15) saturate(1.2) brightness(1.1)'; x.drawImage(fNight, 0, 0, W, H); x.filter = 'none'; x.restore();
+    x.strokeStyle = GREEN; x.lineWidth = 6; x.beginPath(); x.moveTo(W * .56 + 76, 0); x.lineTo(W * .56 - 76, H); x.stroke();
+    shade(x, .7);
+    chip(x, ['DAY · BALL FOUND', `${dayPct}% OF FRAMES`], 120, H - 120, GREEN, INK, true);
+    chip(x, ['FLOODLIGHTS · BALL FOUND', `${nightPct}% OF FRAMES`], W - 700, H - 112, RED, INK, true);
+  }
+  // 5 · Why we stopped predicting talent at U10: the score we will not produce
+  { const x = base(document.getElementById('n5'), fPark, .8);
+    const p = park.frames[0].p.find(q => q[0] === 2), [, cx, cy, bw, bh] = p;
+    const X0 = (cx - bw / 2) * W, Y0 = (cy - bh / 2) * H, w = bw * W, h = bh * H;
+    x.setLineDash([10, 8]); x.strokeStyle = 'rgba(240,242,233,.8)'; x.lineWidth = 3; x.strokeRect(X0, Y0, w, h); x.setLineDash([]);
+    const [cw, ch] = chip(x, ['TALENT SCORE', 'POTENTIAL  ?? / 10'], X0 + w + 26, Y0 + 10, 'rgba(240,242,233,.92)', INK, true);
+    x.strokeStyle = RED; x.lineWidth = 8; x.beginPath(); x.moveTo(X0 + w + 14, Y0 + ch + 20); x.lineTo(X0 + w + 38 + cw, Y0); x.stroke();
+    shade(x, .75);
+    chip(x, ['NOT A QUESTION WE ANSWER FOR U10'], 120, H - 88, RED, INK, true);
+  }
+  // 6 · Body-height units, not metres
+  { const x = base(document.getElementById('n6'), fDuel, .82);
+    const p = fix(duel.frames[145].p.find(q => q[0] === 1));
+    const head = K(p, 0), la = K(p, 15), ra = K(p, 16), top = head[1] - 22, bottom = Math.max(la[1], ra[1]) + 6, bh = bottom - top;
+    const stride = Math.abs(la[0] - ra[0]) / bh;
+    const sx = Math.min(la[0], ra[0]) - 36;
+    x.strokeStyle = GREEN; x.lineWidth = 5; x.beginPath(); x.moveTo(sx, top); x.lineTo(sx, bottom); x.stroke();
+    for (const yy of [top, bottom]) { x.beginPath(); x.moveTo(sx - 16, yy); x.lineTo(sx + 16, yy); x.stroke(); }
+    for (let k = 1; k < 4; k++) { const yy = top + bh * k / 4; x.lineWidth = 2; x.beginPath(); x.moveTo(sx - 8, yy); x.lineTo(sx + 8, yy); x.stroke(); }
+    chip(x, ['1.00 BODY HEIGHT'], sx - 300, top + bh / 2 - 26, GREEN, INK);
+    const fy = bottom + 18; x.strokeStyle = WHITE; x.lineWidth = 4;
+    x.beginPath(); x.moveTo(la[0], fy); x.lineTo(ra[0], fy); x.stroke(); [la[0], ra[0]].forEach(X => { x.beginPath(); x.moveTo(X, fy - 12); x.lineTo(X, fy + 12); x.stroke(); });
+    chip(x, [`STRIDE ≈ ${stride.toFixed(2)} BH`], Math.min(Math.max(la[0], ra[0]) + 20, W * .84 - 260), fy - 22, WHITE, INK);
+    shade(x, .6);
+    chip(x, ['NO PITCH CALIBRATION → NO METRES'], 190, 34, 'rgba(8,11,9,.86)', WHITE);
+  }
+  document.body.dataset.done = '1';
+})();
+</script>
+</body></html>
