@@ -275,7 +275,23 @@
   .lane__mark { left: 8px; top: 38px; transform: skewX(12deg); }
   .lane--along .lane__bar { top: 19px; }
   .lane--along .lane__mark { left: 8px; top: 38px; transform: skewX(12deg); }
+  /* the card wears its status colour; the next step, a hover hint on desktop, is written out */
+  .lane { border-top: 4px solid var(--cs, var(--ink)); }
+  .lane__g { color: var(--cs-ink, var(--ink)); }
+  .lane__next { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; margin-top: -4px; font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--mute-p); }
+  .lane__next::before { content: ""; width: 22px; border-top: 2px dashed var(--mute-p); }
+  .lane__next b { font-weight: 500; color: var(--ink); }
 }
+.lane[data-s="1"] { --cs: var(--c1); } .lane[data-s="2"] { --cs: var(--c2); } .lane[data-s="3"] { --cs: var(--c3); }
+.lane[data-s="4"] { --cs: var(--c4); } .lane[data-s="5"] { --cs: var(--c5); } .lane[data-s="6"] { --cs: var(--c6); }
+@media (min-width: 1181px) { .lane__next { display: none; } }
+
+/* swipe rows on phones: a dot per card in its status colour, the current one long */
+.cdots { display: flex; align-items: center; gap: 6px; margin: 14px var(--gutter) 0; }
+.cdots button { width: 14px; height: 6px; padding: 0; background: var(--dc, currentColor); opacity: .3; transform: skewX(-12deg); transition: width .35s var(--snap), opacity .25s; }
+.cdots button[aria-current="true"] { width: 34px; opacity: 1; }
+.cdots span { margin-left: auto; font: 500 10.5px/1 var(--f-mono); letter-spacing: .05em; }
+@media (min-width: 1181px) { .cdots--lanes { display: none; } }
 
 /* ---------- 05 Technology: the relay ---------- */
 #technology::before { display: none; }
@@ -618,6 +634,11 @@
   .log .nb__x { margin-top: 4px; font-size: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .log .nb__meta { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 8px; font-size: 10px; }
   .log .nb__go { display: none; }
+  /* every note keeps its visual on phones: a small frame beside the title, in colour when it is the one you are reading */
+  .log .nb:not(.is-lead) { grid-template-columns: 30px minmax(0, 1fr) 96px; grid-template-areas: "n t img" "n x img" "n meta meta"; }
+  .log .nb:not(.is-lead) .nb__img { display: block; height: 66px; align-self: start; }
+  .log .nb.is-near .nb__img img { filter: saturate(1.15) contrast(1.05); }
+  .log .nb.is-near .nb__n, .log .nb.is-near .nb__t { color: var(--green); }
 }
 
 /* ---------- 10 Partner: on your marks ---------- */
@@ -705,6 +726,26 @@
 .ftr--cut { position: relative; z-index: 9; margin-top: calc(var(--cut) * -1); padding-top: calc(var(--cut) + 72px); border-top: 0; clip-path: polygon(0 var(--cut), 100% 0, 100% 100%, 0 100%); }
 .ftr--cut > .wrap { width: 100%; max-width: none; }
 .ftr--cut .ftr__wordmark { transform: skewX(var(--lean)); transform-origin: 0 100%; }
+.ftr__col summary { list-style: none; cursor: default; }
+.ftr__col summary::-webkit-details-marker { display: none; }
+@media (min-width: 641px) { .ftr__col summary { pointer-events: none; } }
+@media (max-width: 640px) {
+  /* phones: the dock already lists the pages, so Explore goes; the rest fold */
+  .ftr--cut { padding-top: calc(var(--cut) + 40px); }
+  .ftr__top { gap: 22px; }
+  .ftr__brand p { margin-top: 12px; font-size: 14px; }
+  .ftr .ftr__cols { display: block; border-top: 1px solid var(--line-d); }
+  .ftr__col:first-child { display: none; }
+  .ftr__col { border-bottom: 1px solid var(--line-d); }
+  .ftr__col summary { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; cursor: pointer; }
+  .ftr__col summary h4 { margin: 0; }
+  .ftr__col summary::after { content: "+"; font: 400 20px/1 var(--f-mono); color: var(--green); transition: transform .3s var(--snap); }
+  .ftr__col[open] summary::after { transform: rotate(45deg); }
+  .ftr__col > div { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; padding: 0 0 14px; }
+  .ftr__cols a { padding: 7px 0; }
+  .ftr__wordmark { margin-top: 28px; font-size: 24vw; }
+  .ftr__bot { flex-direction: column; gap: 6px; padding-top: 16px; font-size: 10px; }
+}
 
 @media (max-width: 1024px) {
   .start__head { display: block; }
@@ -785,9 +826,9 @@
 .lix__list a > b { font: 400 clamp(26px, 2.8vw, 42px)/1.02 var(--f-display); text-transform: uppercase; transition: color .2s; }
 .lix__q { font-size: 16px; color: #2C332C; transition: color .2s; }
 .lix__list a > i { font-style: normal; font-size: 24px; transition: transform .25s var(--snap), color .2s; }
-.lix__list a:hover::before, .lix__list a:focus-visible::before { transform: scaleX(1) skewX(-12deg); }
-.lix__list a:hover > b, .lix__list a:focus-visible > b, .lix__list a:hover > i, .lix__list a:focus-visible > i { color: var(--green); }
-.lix__list a:hover .lix__n, .lix__list a:hover .lix__q, .lix__list a:focus-visible .lix__n, .lix__list a:focus-visible .lix__q { color: var(--white); }
+.lix__list a:hover::before, .lix__list a:focus-visible::before, .lix__list a.is-near::before { transform: scaleX(1) skewX(-12deg); }
+.lix__list a:hover > b, .lix__list a:focus-visible > b, .lix__list a:hover > i, .lix__list a:focus-visible > i, .lix__list a.is-near > b, .lix__list a.is-near > i { color: var(--green); }
+.lix__list a:hover .lix__n, .lix__list a:hover .lix__q, .lix__list a:focus-visible .lix__n, .lix__list a:focus-visible .lix__q, .lix__list a.is-near .lix__n, .lix__list a.is-near .lix__q { color: var(--white); }
 .lix__list a:hover > i { transform: translateX(6px); }
 .lix__go a > b { color: var(--green-ink); }
 
@@ -977,19 +1018,17 @@ a:hover .vz--keep b, a:focus-visible .vz--keep b { animation: keep-stop .9s cubi
 a:hover .vz--blocks i:nth-child(1), a:focus-visible .vz--blocks i:nth-child(1) { background: var(--green); border-color: var(--green); transform: translateX(26px) skewX(-12deg); }
 .lix__go .vz { --idle: var(--green-ink); }
 
-@media (max-width: 860px), (hover: none) {
-  /* no hover on touch: show where each row leads, in its finished state */
-  .vz { color: var(--ink); }
-  .vz--lanes i { transform: scaleX(1) skewX(-12deg); border-color: var(--green-ink); }
-  .vz--relay b { left: calc(100% - 30px); }
-  .vz--hurd b { left: calc(72% - 18px); background: #FF4255; }
-  .vz--hurd i:nth-child(-n+4) { border-color: var(--green-ink); }
-  .vz--hurd i:nth-child(5) { border-color: #FF4255; transform: skewX(-12deg) rotate(-28deg) translateY(4px); }
-  .vz--finish b { filter: none; background-position: 60% 50%; }
-  .vz--finish::after { transform: skewX(-12deg); }
-  .vz--log i { opacity: 1; } .vz--log i:nth-child(1) { background: var(--green-ink); }
-  .vz--keep i { opacity: 1; } .vz--keep b { left: calc(34% - 26px); background: var(--green-ink); }
-  .vz--blocks i:nth-child(1) { background: var(--green-ink); border-color: var(--green-ink); transform: translateX(26px) skewX(-12deg); }
+/* touch: the row in the middle of the screen plays its preview, as hover does on desktop */
+@media (hover: none) { .vz { color: var(--ink); } .lix__list a.is-near .vz { color: var(--on); } }
+a.is-near .vz--lanes i { transform: scaleX(1) skewX(-12deg); border-color: var(--green);}
+a.is-near .vz--relay b { left: calc(100% - 30px);}
+a.is-near .vz--hurd b { left: calc(72% - 18px); background: #FF4255;}
+a.is-near .vz--hurd i:nth-child(-n+4) { border-color: var(--green);}
+a.is-near .vz--hurd i:nth-child(5) { border-color: #FF4255; transform: skewX(-12deg) rotate(-28deg) translateY(4px);}
+a.is-near .vz--finish b { filter: none; background-position: 60% 50%;}
+a.is-near .vz--finish::after { transform: skewX(-12deg);}
+a.is-near .vz--log i { opacity: 1;} a.is-near .vz--log i:nth-child(1) { background: var(--green);}
+a.is-near .vz--keep i { opacity: 1;} a.is-near .vz--keep b { left: calc(34% - 26px); background: var(--green);}
 }
 @media (max-width: 860px) {
   .lix__list a { grid-template-columns: 34px minmax(0, 1fr) 20px; grid-template-areas: "n b i" "n q i" "n v i"; }
@@ -1178,9 +1217,9 @@ a:hover .vz--blocks i:nth-child(1), a:focus-visible .vz--blocks i:nth-child(1) {
 .read8__q::before { content: ""; position: absolute; left: 50%; top: -6px; width: 12px; height: 12px; background: var(--ink); translate: -50% 0; rotate: 45deg; }
 .read8 li:first-child .read8__q { left: 0; translate: 0 8px; } .read8 li:first-child .read8__q::before { left: 30px; }
 .read8 li:last-child .read8__q { left: auto; right: 0; translate: 0 8px; } .read8 li:last-child .read8__q::before { left: auto; right: 24px; }
-.read8 li:hover .read8__h, .read8 li:focus-visible .read8__h { transform: skewX(-12deg) translateY(-6px); }
-.read8 li:hover .read8__h i, .read8 li:focus-visible .read8__h i { background: var(--green); }
-.read8 li:hover b, .read8 li:focus-visible b { color: var(--green-ink); }
+.read8 li:hover .read8__h, .read8 li:focus-visible .read8__h, .read8 li.is-near .read8__h { transform: skewX(-12deg) translateY(-6px); }
+.read8 li:hover .read8__h i, .read8 li:focus-visible .read8__h i, .read8 li.is-near .read8__h i { background: var(--green); }
+.read8 li:hover b, .read8 li:focus-visible b, .read8 li.is-near b { color: var(--green-ink); }
 .read8 li:hover .read8__q, .read8 li:focus-visible .read8__q { opacity: 1; visibility: visible; translate: -50% 0; transition: opacity .2s, translate .25s var(--snap); }
 .read8 li:first-child:hover .read8__q, .read8 li:last-child:hover .read8__q, .read8 li:first-child:focus-visible .read8__q, .read8 li:last-child:focus-visible .read8__q { translate: 0 0; }
 .read8__key { display: flex; flex-wrap: wrap; gap: 10px 28px; margin-top: 18px; font-size: 14px; color: #2C332C; }
@@ -1431,4 +1470,26 @@ a:hover .vz--blocks i:nth-child(1), a:focus-visible .vz--blocks i:nth-child(1) {
   .mv-rows { transform: none; }
   .mv-row { transform: none; }
   .menu, .menu.open { transition: visibility 0s; }
+}
+
+/* =========================================================
+   Phones: polish pass
+   ========================================================= */
+.nextleg--ink { padding-bottom: calc(var(--cut) + 4px); }   /* the footer comes in on the same ink: no empty band */
+@media (max-width: 640px) {
+  /* Partner: routes as compact starting blocks, two and a bit on screen */
+  .start .rf__list button { width: 40vw; min-height: 104px; gap: 8px; padding: 10px 14px 12px; font-size: 16px; }
+  .start .rf__list button[aria-selected="true"] { transform: translateY(-4px); }
+  .rf__g { width: 26px; height: 26px; }
+  .sstep { margin-bottom: 16px; }
+  /* Partnerships: evidence rows read label over value, not two cramped columns */
+  .heat .claim2__rows li { grid-template-columns: 1fr; gap: 3px; }
+  .heat .claim2__rows { font-size: 12px; }
+}
+@media (hover: none) {
+  /* About on touch: every "In practice" is open, so nothing changes height while you scroll; the middle line only gets brighter */
+  .keep__lines li .keep__eg { grid-template-rows: auto 1fr; opacity: .6; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255, 66, 85, .3); transition: opacity .3s; }
+  .keep__lines li:not(.is-on) .keep__eg { opacity: .6; }
+  .keep__lines li .keep__eg i { margin-bottom: 4px; }
+  .keep__lines li.is-on .keep__eg { opacity: 1; border-top-color: rgba(255, 66, 85, .6); }
 }

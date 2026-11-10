@@ -180,6 +180,7 @@
       cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
     const portrait = () => matchMedia('(max-aspect-ratio: 1/1)').matches;
+    const narrowFilmTop = portrait;
     // landscape: same placement as object-fit: cover. Phones: the whole frame, panned to keep the runner centred.
     const place = i => {
       if (!portrait()) { const s = Math.max(W / VW, H / VH); return { s, ox: (W - VW * s) / 2, oy: (H - VH * s) / 2 - H * .07 }; }
@@ -220,7 +221,10 @@
       const X = x => ox + x * VW * s, Y = y => oy + y * VH * s;
       film.style.transform = narrowFilm ? `translate(${ox.toFixed(1)}px, -9%)` : '';
       ctx.clearRect(0, 0, W, H);
-      const px = G.c[i][0], foot = G.b[i], head = G.t[i], ty = Y(head) - 14;
+      const px = G.c[i][0], foot = G.b[i], head = G.t[i];
+      // phones: the head can rise into the lede; keep tags below the text block
+      const lede = chase.querySelector('.chase__lede'), textBottom = lede ? lede.getBoundingClientRect().bottom - pin2.getBoundingClientRect().top : 0;
+      const ty = Math.max(Y(head) - 14, narrowFilmTop() ? textBottom + 30 : -1e9);
       const stepsTop = steps[0].parentNode.getBoundingClientRect().top - pin2.getBoundingClientRect().top;
 
       if (a === 0) {
@@ -457,6 +461,49 @@
   document.addEventListener('click', e => { if (!dock.contains(e.target)) setSheet(false); });
   dock.addEventListener('focusin', () => dock.classList.remove('is-tucked'));
 
+  /* ---------- Touch: no hover, so the item in the middle of the screen takes the hover state ---------- */
+  const touchQ = matchMedia('(hover: none)');
+  const nearFocus = (items, on) => {
+    let cur;
+    const tick = () => {
+      if (!touchQ.matches) return;
+      const mid = innerHeight * .45; let best = null, bd = innerHeight * .3;
+      items().forEach(it => { const r = it.getBoundingClientRect(); if (!r.height) return; const d = Math.abs((r.top + r.bottom) / 2 - mid); if (d < bd) { bd = d; best = it; } });
+      if (best !== cur) { cur = best; on(best); }
+    };
+    addEventListener('scroll', () => requestAnimationFrame(tick), { passive: true }); tick();
+    return tick;
+  };
+  const nearClass = sel => { const all = () => [...document.querySelectorAll(sel)]; nearFocus(all, b => all().forEach(x => x.classList.toggle('is-near', x === b))); };
+  nearClass('.lix__list a'); nearClass('.read8 li'); nearClass('.log .nb:not(.is-lead):not([hidden])');
+
+  /* ---------- Swipe rows: dots under the row, coloured by status, tap to jump ---------- */
+  const dotsFor = (row, items, cls, colour) => {
+    const bar = document.createElement('div');
+    bar.className = 'cdots ' + cls; bar.setAttribute('aria-hidden', 'true');
+    bar.innerHTML = items.map((it, i) => `<button tabindex="-1" style="--dc:${colour(it)}"></button>`).join('') + `<span class="mono"></span>`;
+    row.after(bar);
+    const btns = [...bar.querySelectorAll('button')], lbl = bar.querySelector('span');
+    const cur = () => { const L = row.getBoundingClientRect().left; let best = 0, bd = 1e9; items.forEach((it, i) => { const d = Math.abs(it.getBoundingClientRect().left - L - parseFloat(getComputedStyle(row).paddingLeft)); if (d < bd) { bd = d; best = i; } }); return best; };
+    const mark = () => { const c = cur(); btns.forEach((b, i) => b.setAttribute('aria-current', i === c)); lbl.textContent = `${String(c + 1).padStart(2, '0')} / ${String(items.length).padStart(2, '0')}`; };
+    btns.forEach((b, i) => b.addEventListener('click', () => row.scrollTo({ left: items[i].offsetLeft - row.offsetLeft - parseFloat(getComputedStyle(row).paddingLeft), behavior: reduce ? 'auto' : 'smooth' })));
+    row.addEventListener('scroll', () => requestAnimationFrame(mark), { passive: true });
+    mark();
+  };
+  const lanesRow = document.querySelector('.lanes__list');
+  if (lanesRow) {
+    const lanes = [...lanesRow.children];
+    // write out the next status for each card (on desktop it is a hover hint on the track)
+    lanes.forEach(l => { const r = l.querySelector('.lane__rest span'); if (r) l.insertAdjacentHTML('beforeend', `<p class="lane__next mono">Next <b>${r.textContent.replace(/^Next · /, '')}</b></p>`); });
+    dotsFor(lanesRow, lanes, 'cdots--lanes', l => `var(--c${l.dataset.s || 6})`);
+  }
+
+  /* ---------- Footer: on phones the link groups fold ---------- */
+  const fcols = [...document.querySelectorAll('.ftr__col')];
+  const phoneQ = matchMedia('(max-width: 640px)');
+  const foldFooter = () => fcols.forEach(d => { d.open = !phoneQ.matches; });
+  foldFooter(); phoneQ.addEventListener('change', foldFooter);
+
   /* ---------- Insights: notes arrive one by one ---------- */
   const log = document.querySelector('.log');
   if (log && !reduce) {
@@ -476,11 +523,14 @@
       li.addEventListener('focus', () => focus(li));
       li.addEventListener('click', () => focus(li));
     });
+    nearFocus(() => lines, b => { if (b) focus(b); });
     if (!reduce) {
       keep.classList.add('js-reveal');
       const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { keep.classList.add('is-in'); io.disconnect(); } }), { rootMargin: '0px 0px -15% 0px' });
       io.observe(keep);
     }
+    const people = [...document.querySelectorAll('#team .person')];
+    nearFocus(() => people, b => people.forEach(x => x.classList.toggle('is-on', x === b)));   // touch: the person in the middle lights up
     document.querySelectorAll('#team .person').forEach(p => {
       const ks = (p.dataset.keeps || '').split(' ');
       const mark = on => lines.forEach(l => l.classList.toggle('is-kept', on && ks.includes(l.dataset.k)));

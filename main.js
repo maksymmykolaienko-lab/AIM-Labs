@@ -107,7 +107,9 @@
     $('pp-prev').addEventListener('click', () => show(cur - 1));
     $('pp-next').addEventListener('click', () => show(cur + 1));
     $('pp-replay').addEventListener('click', () => show(cur));
-    addEventListener('resize', () => show(cur, false));
+    // phones fire resize whenever the address bar slides; only a real width change re-places the run
+    let lastW = innerWidth;
+    addEventListener('resize', () => { if (innerWidth !== lastW) { lastW = innerWidth; show(cur, false); } });
     show(cur, false);
     new IntersectionObserver(([e], o) => { if (e.isIntersecting) { show(4); o.disconnect(); } }, { threshold: .5 }).observe(run);
   }
